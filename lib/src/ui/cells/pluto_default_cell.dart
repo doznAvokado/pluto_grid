@@ -163,7 +163,7 @@ class _PlutoDefaultCellState extends PlutoStateWithChange<PlutoDefaultCell> {
       );
     }
 
-    return Row(children: [
+    return Row(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
       if (_canRowDrag)
         _RowDragIconWidget(
           column: widget.column,
@@ -186,7 +186,7 @@ class _PlutoDefaultCellState extends PlutoStateWithChange<PlutoDefaultCell> {
         ),
       if (spacingWidget != null) spacingWidget,
       if (expandIcon != null) expandIcon,
-      Expanded(child: cellWidget),
+      Expanded(child: Center(child: cellWidget)),
       if (_showGroupCount)
         Text(
           '($_groupCount)',

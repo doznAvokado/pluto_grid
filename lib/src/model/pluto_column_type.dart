@@ -7,10 +7,13 @@ abstract class PlutoColumnType {
   /// Set as a string column.
   factory PlutoColumnType.text({
     dynamic defaultValue = '',
+    bool isOnlyDigits = false,
+    int? validLength,
   }) {
     return PlutoColumnTypeText(
-      defaultValue: defaultValue,
-    );
+        defaultValue: defaultValue,
+        isOnlyDigits: isOnlyDigits,
+        validLength: validLength);
   }
 
   /// Set to numeric column.
@@ -232,16 +235,22 @@ extension PlutoColumnTypeExtension on PlutoColumnType {
 }
 
 class PlutoColumnTypeText implements PlutoColumnType {
+  final bool isOnlyDigits;
+  final int? validLength;
+
   @override
   final dynamic defaultValue;
 
   const PlutoColumnTypeText({
     this.defaultValue,
+    this.isOnlyDigits = false,
+    this.validLength,
   });
 
   @override
   bool isValid(dynamic value) {
-    return value is String || value is num;
+    return (value is String || value is num) &&
+        (validLength != null ? (value.toString().length == validLength) : true);
   }
 
   @override

@@ -250,7 +250,9 @@ class PlutoColumnTypeText implements PlutoColumnType {
   @override
   bool isValid(dynamic value) {
     return (value is String || value is num) &&
-        (validLength != null ? (value.toString().length == validLength) : true);
+        (validLength != null
+            ? (value.toString().length == validLength)
+            : value.toString().isNotEmpty);
   }
 
   @override

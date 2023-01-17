@@ -394,14 +394,17 @@ class _ColumnWidget extends StatelessWidget {
                 child: Row(
                   children: [
                     if (column.enableRowChecked)
-                      CheckboxAllSelectionWidget(stateManager: stateManager),
-                    Expanded(
-                      child: _ColumnTextWidget(
-                        column: column,
-                        stateManager: stateManager,
-                        height: height,
+                      Expanded(child: Center(child: CustomCheckboxAllSelectionWidget(stateManager: stateManager))),
+
+                    if (!column.enableRowChecked)
+                      Expanded(
+                        child: _ColumnTextWidget(
+                          column: column,
+                          stateManager: stateManager,
+                          height: height,
+                        ),
                       ),
-                    ),
+
                     if (showSizedBoxForIcon) SizedBox(width: style.iconSize),
                   ],
                 ),
@@ -475,6 +478,75 @@ class CheckboxAllSelectionWidgetState
       value: _checked,
       handleOnChanged: _handleOnChanged,
       tristate: true,
+      scale: 0.86,
+      unselectedColor: stateManager.configuration.style.iconColor,
+      activeColor: stateManager.configuration.style.activatedBorderColor,
+      checkColor: stateManager.configuration.style.activatedColor,
+    );
+  }
+}
+
+
+class CustomCheckboxAllSelectionWidget extends PlutoStatefulWidget {
+  final PlutoGridStateManager stateManager;
+
+  const CustomCheckboxAllSelectionWidget({required this.stateManager, Key? key})
+      : super(key: key);
+
+  @override
+  CustomCheckboxAllSelectionWidgetState createState() => CustomCheckboxAllSelectionWidgetState();
+}
+
+class CustomCheckboxAllSelectionWidgetState extends PlutoStateWithChange<CustomCheckboxAllSelectionWidget> {
+  bool? _checked;
+
+  @override
+  PlutoGridStateManager get stateManager => widget.stateManager;
+
+  @override
+  void initState() {
+    super.initState();
+
+    updateState(PlutoNotifierEventForceUpdate.instance);
+  }
+
+  @override
+  void updateState(PlutoNotifierEvent event) {
+    _checked = update<bool?>(
+      _checked,
+      stateManager.tristateCheckedRow,
+    );
+  }
+
+  void _handleOnChanged(bool? changed) {
+    if (changed == _checked) {
+      return;
+    }
+
+    changed ??= false;
+
+    if (_checked == null) changed = true;
+
+    stateManager.toggleAllRowChecked(changed);
+
+    if (stateManager.onRowChecked != null) {
+      stateManager.onRowChecked!(
+        PlutoGridOnRowCheckedAllEvent(isChecked: changed),
+      );
+    }
+
+    setState(() {
+      _checked = changed;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return PlutoCustomCheckbox(
+      value: _checked,
+      handleOnChanged: _handleOnChanged,
+      tristate: true,
+      // scale: 1,
       scale: 0.86,
       unselectedColor: stateManager.configuration.style.iconColor,
       activeColor: stateManager.configuration.style.activatedBorderColor,

@@ -178,15 +178,20 @@ class _PlutoDefaultCellState extends PlutoStateWithChange<PlutoDefaultCell> {
           ),
         ),
       if (widget.column.enableRowChecked)
-        CheckboxSelectionWidget(
-          column: widget.column,
-          row: widget.row,
-          rowIdx: widget.rowIdx,
-          stateManager: stateManager,
+        Expanded(
+          child: Center(
+            child: CustomCheckboxSelectionWidget(
+              column: widget.column,
+              row: widget.row,
+              rowIdx: widget.rowIdx,
+              stateManager: stateManager,
+              customIcon: cellWidget,
+            )
+          ),
         ),
       if (spacingWidget != null) spacingWidget,
       if (expandIcon != null) expandIcon,
-      Expanded(child: Center(child: cellWidget)),
+      if (!widget.column.enableRowChecked) Expanded(child: Center(child: cellWidget)),
       if (_showGroupCount)
         Text(
           '($_groupCount)',
@@ -401,6 +406,99 @@ class CheckboxSelectionWidgetState
       unselectedColor: stateManager.configuration.style.iconColor,
       activeColor: stateManager.configuration.style.activatedBorderColor,
       checkColor: stateManager.configuration.style.activatedColor,
+    );
+  }
+}
+
+
+class CustomCheckboxSelectionWidget extends PlutoStatefulWidget {
+  final PlutoGridStateManager stateManager;
+  final PlutoColumn column;
+  final PlutoRow row;
+  final int rowIdx;
+  final Widget customIcon;
+
+  const CustomCheckboxSelectionWidget({
+    required this.stateManager,
+    required this.column,
+    required this.row,
+    required this.rowIdx,
+    required this.customIcon,
+    super.key,
+  });
+
+  @override
+  CustomCheckboxSelectionWidgetState createState() => CustomCheckboxSelectionWidgetState();
+}
+
+class CustomCheckboxSelectionWidgetState extends PlutoStateWithChange<CustomCheckboxSelectionWidget> {
+  bool _tristate = false;
+
+  bool? _checked;
+
+  @override
+  PlutoGridStateManager get stateManager => widget.stateManager;
+
+  @override
+  void initState() {
+    super.initState();
+
+    updateState(PlutoNotifierEventForceUpdate.instance);
+  }
+
+  @override
+  void updateState(PlutoNotifierEvent event) {
+    _tristate = update<bool>(
+      _tristate,
+      stateManager.enabledRowGroups && widget.row.type.isGroup,
+    );
+
+    _checked = update<bool?>(
+      _checked,
+      _tristate ? widget.row.checked : widget.row.checked == true,
+    );
+  }
+
+  void _handleOnChanged(bool? changed) {
+    if (changed == _checked) {
+      return;
+    }
+
+    if (_tristate) {
+      changed ??= false;
+
+      if (_checked == null) changed = true;
+    } else {
+      changed = changed == true;
+    }
+
+    stateManager.setRowChecked(widget.row, changed);
+
+
+
+    if (stateManager.onRowChecked != null) {
+      stateManager.onRowChecked!(
+        PlutoGridOnRowCheckedOneEvent(
+          row: widget.row,
+          rowIdx: widget.rowIdx,
+          isChecked: changed,
+        ),
+      );
+    }
+
+    setState(() {
+      _checked = changed;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return PlutoCustomCheckbox(
+      value: _checked,
+      handleOnChanged: _handleOnChanged,
+      tristate: _tristate,
+      scale: 1,
+      customCheckboxIcon: widget.customIcon,
     );
   }
 }

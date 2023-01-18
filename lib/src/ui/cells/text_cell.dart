@@ -180,6 +180,17 @@ mixin TextCellState<T extends TextCell> on State<T> implements TextFieldProps {
       widget.stateManager.setKeepFocus(false);
       FocusScope.of(context).requestFocus(FocusNode());
     });
+
+    /// 한 행의 끝에서 다음 행으로 포커스 이동 로직.
+    bool isEndOfOneRow = widget.stateManager.currentCellPosition!.columnIdx! == widget.stateManager.refColumns.length -1;
+    bool isLastRow = widget.stateManager.currentCellPosition!.rowIdx! == widget.stateManager.rows.length - 1;
+
+    if(isEndOfOneRow && !isLastRow) {
+      widget.stateManager.setCurrentCell(
+        widget.stateManager.refRows[widget.stateManager.currentCellPosition!.rowIdx! + 1].cells.values.firstWhere((e) => e.isFirstOfRow == true),
+        widget.stateManager.currentCellPosition!.rowIdx! + 1,
+      );
+    }
   }
 
   KeyEventResult _handleOnKey(FocusNode node, RawKeyEvent event) {

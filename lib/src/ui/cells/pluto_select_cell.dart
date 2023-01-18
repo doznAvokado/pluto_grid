@@ -159,17 +159,11 @@ class _PlutoDropDownCellState extends State<PlutoDropDownCell> {
         return KeyEventResult.handled;
       }
       if (keyManager.isLeft) {
-        widget.stateManager.setCurrentCell(
-          widget.stateManager.refRows[widget.stateManager.currentCellPosition!.rowIdx!].cells['unitNo'],
-          widget.stateManager.currentCellPosition!.rowIdx!,
-        );
+        widget.stateManager.moveCurrentCell(PlutoMoveDirection.left, force: true);
         return KeyEventResult.handled;
       }
       if (keyManager.isRight) {
-        widget.stateManager.setCurrentCell(
-          widget.stateManager.refRows[widget.stateManager.currentCellPosition!.rowIdx!].cells['name'],
-          widget.stateManager.currentCellPosition!.rowIdx!,
-        );
+        widget.stateManager.moveCurrentCell(PlutoMoveDirection.right, force: true);
         return KeyEventResult.handled;
       }
     }
@@ -199,12 +193,7 @@ class _PlutoDropDownCellState extends State<PlutoDropDownCell> {
     if (widget.cell.value != result) {
       widget.stateManager.changeCellValue(widget.cell, result, notify: false);
     }
-
-    widget.stateManager.setCurrentCell(
-        widget.stateManager.refRows[widget.stateManager.currentCellPosition!.rowIdx!].cells['name'],
-        widget.stateManager.currentCellPosition!.rowIdx!,
-        notify: false
-    );
+    widget.stateManager.moveCurrentCell(PlutoMoveDirection.right, force: true, notify: false);
     widget.stateManager.setKeepFocus(true, notify: false);
     widget.stateManager.setEditing(true);
   }

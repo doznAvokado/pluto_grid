@@ -4,9 +4,17 @@ import 'package:pluto_grid/pluto_grid.dart';
 class PlutoCell {
   PlutoCell({
     dynamic value,
+    bool isFirstOfRow = false,
+    bool isLastOfRow = false,
     Key? key,
   })  : _key = key ?? UniqueKey(),
-        _value = value;
+        _value = value,
+        _isFirstOfRow = isFirstOfRow,
+        _isLastOfRow = isLastOfRow;
+
+  final bool _isFirstOfRow;
+
+  final bool _isLastOfRow;
 
   final Key _key;
 
@@ -27,6 +35,10 @@ class PlutoCell {
   PlutoColumn? _column;
 
   PlutoRow? _row;
+
+  bool get isFirstOfRow => _isFirstOfRow;
+
+  bool get isLastOfRow => _isLastOfRow;
 
   Key get key => _key;
 

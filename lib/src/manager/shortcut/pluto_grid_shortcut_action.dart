@@ -445,19 +445,12 @@ class PlutoGridActionDefaultEnterKey extends PlutoGridShortcutAction {
         );
       }
     } else if (enterKeyAction.isEditingAndMoveRight) {
-      if (keyEvent.event.isShiftPressed) {
-        stateManager.moveCurrentCell(
-          PlutoMoveDirection.left,
-          force: true,
-          notify: false,
-        );
-      } else {
-        stateManager.moveCurrentCell(
-          PlutoMoveDirection.right,
-          force: true,
-          notify: false,
-        );
-      }
+      /// shift 키와 enter 키 동일동작 하도록 변경됨.
+      stateManager.moveCurrentCell(
+        PlutoMoveDirection.right,
+        force: true,
+        notify: false,
+      );
     }
   }
 }

@@ -354,6 +354,22 @@ class _ColumnWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Widget? customRendererWidget;
+    if (column.enableRowChecked) {
+      customRendererWidget = stateManager.currentCellPosition == null
+          ? column.renderer!(PlutoColumnRendererContext(      /// create fake row, cell
+              column: column,
+              rowIdx: -1,
+              row: PlutoRow(cells: {}),
+              cell: PlutoCell(),stateManager: stateManager))
+          : column.renderer!(PlutoColumnRendererContext(
+              column: column,
+              rowIdx: stateManager.currentCellPosition!.rowIdx!,
+              row: stateManager.rows[stateManager.currentCellPosition!.rowIdx!],
+              cell: stateManager.currentCell!,
+              stateManager: stateManager));
+    }
+
     return DragTarget<PlutoColumn>(
       onWillAccept: (PlutoColumn? columnToDrag) {
         return columnToDrag != null &&
@@ -394,8 +410,14 @@ class _ColumnWidget extends StatelessWidget {
                 child: Row(
                   children: [
                     if (column.enableRowChecked)
-                      Expanded(child: Center(child: CustomCheckboxAllSelectionWidget(stateManager: stateManager))),
-
+                      Expanded(
+                        child: Center(
+                          child: CustomCheckboxAllSelectionWidget(
+                            stateManager: stateManager,
+                            customIcon: customRendererWidget,
+                          )
+                        )
+                      ),
                     if (!column.enableRowChecked)
                       Expanded(
                         child: _ColumnTextWidget(
@@ -489,8 +511,13 @@ class CheckboxAllSelectionWidgetState
 
 class CustomCheckboxAllSelectionWidget extends PlutoStatefulWidget {
   final PlutoGridStateManager stateManager;
+  final Widget? customIcon;
 
-  const CustomCheckboxAllSelectionWidget({required this.stateManager, Key? key})
+  const CustomCheckboxAllSelectionWidget({
+    required this.stateManager,
+    required this.customIcon,
+    Key? key
+  })
       : super(key: key);
 
   @override
@@ -545,12 +572,12 @@ class CustomCheckboxAllSelectionWidgetState extends PlutoStateWithChange<CustomC
     return PlutoCustomCheckbox(
       value: _checked,
       handleOnChanged: _handleOnChanged,
-      tristate: true,
-      // scale: 1,
-      scale: 0.86,
+      tristate: false,
+      scale: 1,
       unselectedColor: stateManager.configuration.style.iconColor,
       activeColor: stateManager.configuration.style.activatedBorderColor,
       checkColor: stateManager.configuration.style.activatedColor,
+      customCheckboxIcon: widget.customIcon,
     );
   }
 }

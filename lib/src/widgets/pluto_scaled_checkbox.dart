@@ -125,24 +125,36 @@ class _CustomCheckbox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Color appColorGreyDisableButton = Color(0xffe1e7ee);
     final Color appColorGreyBorder = Color(0xffc7d0dc);
     final Color appColorPrimary100 = Color(0xff0078ff);
 
     if (onChanged == null || isChecked == null) {
-      return Container(
-        width: containerWidth,
-        height: containerHeight,
-        decoration: BoxDecoration(
-          color: appColorGreyDisableButton,
-          borderRadius: BorderRadius.all(Radius.circular(radius)),
-          border: Border.fromBorderSide(
-            BorderSide(
-              width: 1,
-              color: appColorGreyBorder,
-              strokeAlign: StrokeAlign.inside,
+      return InkWell(
+        onTap: () => onChanged!(isChecked ?? false),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  width: containerWidth,
+                  height: containerHeight,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.all(Radius.circular(radius)),
+                    border: Border.fromBorderSide(
+                      BorderSide(
+                        width: 1,
+                        color: appColorGreyBorder,
+                        strokeAlign: StrokeAlign.inside,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
-          ),
+          ],
         ),
       );
     }

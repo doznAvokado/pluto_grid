@@ -130,7 +130,6 @@ class _PlutoDropDownCellState extends State<PlutoDropDownCell> {
   bool prevFocus = false;
   bool isChangeFocus = true;
 
-  late final String defaultValue = widget.cell.value;
   late String selectedValue = widget.cell.value;
 
   final Color appColorPrimary100 = const Color(0xff0078ff);
@@ -153,7 +152,7 @@ class _PlutoDropDownCellState extends State<PlutoDropDownCell> {
   KeyEventResult _handleKeyboardEvent(FocusNode node, RawKeyEvent event) {
     var keyManager = PlutoKeyManagerEvent(focusNode: node, event: event);
 
-    if(keyManager.isKeyDownEvent) {
+    if (keyManager.isKeyDownEvent) {
       if (keyManager.isEnter) {
         openDropdownList();
         return KeyEventResult.handled;
@@ -189,8 +188,6 @@ class _PlutoDropDownCellState extends State<PlutoDropDownCell> {
 
   @override
   Widget build(BuildContext context) {
-    final customDropdownKey = GlobalKey();
-    
     return CompositedTransformTarget(
       key: dropdownButtonKey,
       link: layerLink,
@@ -198,7 +195,6 @@ class _PlutoDropDownCellState extends State<PlutoDropDownCell> {
         width: widget.column.width,
         height: 40,
         child: ElevatedButton(
-          key: customDropdownKey,
           focusNode: focusNode,
           onFocusChange: (hasFocus) => setState(() {
             if (isChangeFocus) {
@@ -281,7 +277,6 @@ class PlutoDropDownCellList extends StatefulWidget {
 }
 
 class _PlutoDropDownCellListState extends State<PlutoDropDownCellList> {
-
   late final List<FocusNode> focusNodes;
   int currentFocusedIdx = 0;
   dynamic selectedValue;
@@ -290,6 +285,8 @@ class _PlutoDropDownCellListState extends State<PlutoDropDownCellList> {
   final Color appColorGreyBorder = const Color(0xffc7d0dc);
   final Color appColorGreyDisableButton = const Color(0xffe1e7ee);
   final Color appColorGreyPrimaryText = const Color(0xff7d8da6);
+
+  bool showDropdownList = true;     /// 셀 enter 키 조작으로 포커스 아웃시, 드랍다운 리스트 위젯 dispose 순간 position 날라감. 안보임 처리.
 
   @override
   void initState() {
@@ -302,7 +299,7 @@ class _PlutoDropDownCellListState extends State<PlutoDropDownCellList> {
 
   @override
   void dispose() {
-    for(FocusNode node in focusNodes) {
+    for (FocusNode node in focusNodes) {
       node.dispose();
     }
     super.dispose();
@@ -316,7 +313,7 @@ class _PlutoDropDownCellListState extends State<PlutoDropDownCellList> {
 
     if (keyManager.isKeyDownEvent) {
       if (keyManager.isUp) {
-        if(currentFocusedIdx > 0) {
+        if (currentFocusedIdx > 0) {
           setState(() {
             currentFocusedIdx--;
             focusNodes[currentFocusedIdx].requestFocus();
@@ -326,7 +323,7 @@ class _PlutoDropDownCellListState extends State<PlutoDropDownCellList> {
       }
 
       if (keyManager.isDown) {
-        if(currentFocusedIdx < focusNodes.length -1) {
+        if (currentFocusedIdx < focusNodes.length - 1) {
           setState(() {
             currentFocusedIdx++;
             focusNodes[currentFocusedIdx].requestFocus();
@@ -336,12 +333,15 @@ class _PlutoDropDownCellListState extends State<PlutoDropDownCellList> {
       }
 
       if (keyManager.isEnter) {
+        setState(() =>showDropdownList = false);
         Navigator.of(context).pop(selectedValue);
         return KeyEventResult.handled;
       }
 
       if (keyManager.isEsc) {
+        setState(() =>showDropdownList = false);
         Navigator.of(context).pop();
+        widget.stateManager.setEditing(false);
         return KeyEventResult.handled;
       }
     }
@@ -363,60 +363,66 @@ class _PlutoDropDownCellListState extends State<PlutoDropDownCellList> {
               onTap: () => Navigator.of(context).pop(),
             ),
           ),
-          Positioned(
-            top: widget.isUpside ? null : widget.offset.dy,
-            left: widget.offset.dx,
-            bottom: !widget.isUpside ? null : widget.offset.dy,
-            child: CompositedTransformFollower(
-              link: widget.layerLink,
-              targetAnchor: widget.isUpside ? Alignment.topLeft : Alignment.bottomLeft,
-              followerAnchor:
-              widget.isUpside ? Alignment.bottomLeft : Alignment.topLeft,
-              child: Container(
-                margin: const EdgeInsets.symmetric(vertical: 6),
-                padding: const EdgeInsets.symmetric(vertical: 10),
-                height:
-                widget.items.length >= 8 ? 8 * 36 + 22 : widget.items.length * 36 + 22,
-                width: widget.width,
-                decoration: BoxDecoration(
-                  borderRadius: const BorderRadius.all(Radius.circular(10)),
-                  color: Colors.white,
-                  border: Border.fromBorderSide(
-                    BorderSide(
-                      width: 1,
-                      color: appColorGreyBorder,
+          Visibility(
+            visible: showDropdownList,
+            child: Positioned(
+              top: widget.isUpside ? null : widget.offset.dy,
+              left: widget.offset.dx,
+              bottom: !widget.isUpside ? null : widget.offset.dy,
+              child: CompositedTransformFollower(
+                link: widget.layerLink,
+                targetAnchor:
+                    widget.isUpside ? Alignment.topLeft : Alignment.bottomLeft,
+                followerAnchor:
+                    widget.isUpside ? Alignment.bottomLeft : Alignment.topLeft,
+                child: Container(
+                  margin: const EdgeInsets.symmetric(vertical: 6),
+                  padding: const EdgeInsets.symmetric(vertical: 10),
+                  height: widget.items.length >= 8
+                      ? 8 * 36 + 22
+                      : widget.items.length * 36 + 22,
+                  width: widget.width,
+                  decoration: BoxDecoration(
+                    borderRadius: const BorderRadius.all(Radius.circular(10)),
+                    color: Colors.white,
+                    border: Border.fromBorderSide(
+                      BorderSide(
+                        width: 1,
+                        color: appColorGreyBorder,
+                      ),
                     ),
+                    boxShadow: [
+                      BoxShadow(
+                        blurRadius: 10,
+                        spreadRadius: 2,
+                        color: appColorGreyDisableButton,
+                      )
+                    ],
                   ),
-                  boxShadow: [
-                    BoxShadow(
-                      blurRadius: 10,
-                      spreadRadius: 2,
-                      color: appColorGreyDisableButton,
-                    )
-                  ],
-                ),
-                child: FocusTraversalGroup(
-                  child: ListView.builder(
-                    padding: EdgeInsets.zero,
-                    itemCount: widget.items.length,
-                    itemBuilder: (context, index) => InkWell(
-                      onTap: () => Navigator.of(context).pop(selectedValue),
-                      child: SizedBox(
-                        height: 36,
-                        width: double.infinity,
-                        child: ElevatedButton(
-                          focusNode: focusNodes[index],
-                          onFocusChange: (hasFocus) {
-                            if(hasFocus) {
-                              setState(() {
-                                selectedValue = widget.items[index];
-                              });
-                            }
-                          },
-                          onPressed: () => Navigator.of(context).pop(selectedValue),
-                          style: _setButtonStyle(),
-                          child: Text(widget.items[index]),
-                          // child: Text(toValue(items[index])),
+                  child: FocusTraversalGroup(
+                    child: ListView.builder(
+                      padding: EdgeInsets.zero,
+                      itemCount: widget.items.length,
+                      itemBuilder: (context, index) => InkWell(
+                        onTap: () => Navigator.of(context).pop(selectedValue),
+                        child: SizedBox(
+                          height: 36,
+                          width: double.infinity,
+                          child: ElevatedButton(
+                            focusNode: focusNodes[index],
+                            onFocusChange: (hasFocus) {
+                              if (hasFocus) {
+                                setState(() {
+                                  selectedValue = widget.items[index];
+                                });
+                              }
+                            },
+                            onPressed: () =>
+                                Navigator.of(context).pop(selectedValue),
+                            style: _setButtonStyle(),
+                            child: Text(widget.items[index]),
+                            // child: Text(toValue(items[index])),
+                          ),
                         ),
                       ),
                     ),
@@ -436,21 +442,24 @@ class _PlutoDropDownCellListState extends State<PlutoDropDownCellList> {
         const RoundedRectangleBorder(borderRadius: BorderRadius.zero),
       ),
       backgroundColor: MaterialStateProperty.resolveWith((states) {
-          if (states.contains(MaterialState.hovered) || states.contains(MaterialState.focused)) {
+          if (states.contains(MaterialState.hovered) ||
+              states.contains(MaterialState.focused)) {
             return appColorPrimary20;
           }
           return Colors.white;
         },
       ),
       foregroundColor: MaterialStateProperty.resolveWith((states) {
-          if (states.contains(MaterialState.hovered) || states.contains(MaterialState.focused)) {
+          if (states.contains(MaterialState.hovered) ||
+              states.contains(MaterialState.focused)) {
             return appColorPrimary100;
           }
           return appColorGreyPrimaryText;
         },
       ),
       textStyle: MaterialStateProperty.resolveWith((states) {
-          if (states.contains(MaterialState.hovered) || states.contains(MaterialState.focused)) {
+          if (states.contains(MaterialState.hovered) ||
+              states.contains(MaterialState.focused)) {
             return TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.w700,

@@ -232,6 +232,7 @@ class _CellContainerState extends PlutoStateWithChange<_CellContainer> {
     return readOnly == true ? cellColorInReadOnlyState : cellColorInEditState;
   }
 
+  /// 셀 Decoration 옵션
   BoxDecoration _boxDecoration({
     required bool hasFocus,
     required bool readOnly,
@@ -249,7 +250,9 @@ class _CellContainerState extends PlutoStateWithChange<_CellContainer> {
     required Color cellColorInReadOnlyState,
     required Color? cellColorGroupedRow,
     required PlutoGridSelectingMode selectingMode,
-  }) {      /// 셀 Border 옵션
+  }) {
+    const Color appColorsWrong = Color(0xffff4e4e);
+
     if (isCurrentCell) {          /// 현재 한번 선택한 셀 Border
       return BoxDecoration(
         color: _currentCellColor(
@@ -262,11 +265,13 @@ class _CellContainerState extends PlutoStateWithChange<_CellContainer> {
           cellColorInEditState: cellColorInEditState,
           selectingMode: selectingMode,
         ),
-        border: hasFocus        /// 셀을 한번 선택 후, 드랍다운 눌렀을 시, 우측 border 사라짐 이슈 방지.
-            ? stateManager.currentCell!.hasError
-                ? null
-                : Border.all(color: activatedBorderColor, width: 2)
-            : Border(right: BorderSide(color: borderColor)),
+        border: hasFocus
+            ? isEditing
+                ? Border.all(color: activatedBorderColor, width: 2)     /// 셀 편집모드 스타일
+                : stateManager.currentCell!.hasError
+                    ? Border.all(color: appColorsWrong, width: 2)
+                    : Border.all(color: activatedBorderColor, width: 2)
+            : Border(right: BorderSide(color: borderColor)),            /// 셀을 한번 선택 후, 드랍다운 눌렀을 시, 우측 border 사라짐 이슈 방지.
       );
     } else if (isSelectedCell) {  /// PlutoGridSelectingMode 가 cell or horizontal 일 때.
       return BoxDecoration(

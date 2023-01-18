@@ -222,7 +222,7 @@ class _CellContainerState extends PlutoStateWithChange<_CellContainer> {
     required PlutoGridSelectingMode selectingMode,
   }) {
     if (!hasFocus) {
-      return gridBackgroundColor;
+      return Colors.transparent;    /// 셀 선택 후 드랍다운 눌러서, 셀과 함께 그리드 조차도 포커스 아웃일 때 선택했던 셀 배경색.
     }
 
     if (!isEditing) {
@@ -249,8 +249,8 @@ class _CellContainerState extends PlutoStateWithChange<_CellContainer> {
     required Color cellColorInReadOnlyState,
     required Color? cellColorGroupedRow,
     required PlutoGridSelectingMode selectingMode,
-  }) {
-    if (isCurrentCell) {
+  }) {      /// 셀 Border 옵션
+    if (isCurrentCell) {          /// 현재 한번 선택한 셀 Border
       return BoxDecoration(
         color: _currentCellColor(
           hasFocus: hasFocus,
@@ -262,12 +262,11 @@ class _CellContainerState extends PlutoStateWithChange<_CellContainer> {
           cellColorInEditState: cellColorInEditState,
           selectingMode: selectingMode,
         ),
-        border: Border.all(
-          color: hasFocus ? activatedBorderColor : inactivatedBorderColor,
-          width: 1,
-        ),
+        border: hasFocus        /// 셀을 한번 선택 후, 드랍다운 눌렀을 시, 우측 border 사라짐 이슈 방지.
+            ? Border.all(color: activatedBorderColor, width: 2)
+            : Border(right: BorderSide(color: borderColor)),
       );
-    } else if (isSelectedCell) {
+    } else if (isSelectedCell) {  /// PlutoGridSelectingMode 가 cell or horizontal 일 때.
       return BoxDecoration(
         color: activatedColor,
         border: Border.all(

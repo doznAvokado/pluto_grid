@@ -132,6 +132,7 @@ class _PlutoDropDownCellState extends State<PlutoDropDownCell> {
 
   late String selectedValue = widget.cell.value;
 
+  final Color appColorPrimary20 = const Color(0xffd7eaff);
   final Color appColorPrimary100 = const Color(0xff0078ff);
   final Color appColorGreyPrimaryText = const Color(0xff7d8da6);
   final Color appColorGreySecondaryText = const Color(0xffa5b4cb);
@@ -157,6 +158,20 @@ class _PlutoDropDownCellState extends State<PlutoDropDownCell> {
         openDropdownList();
         return KeyEventResult.handled;
       }
+      if (keyManager.isLeft) {
+        widget.stateManager.setCurrentCell(
+          widget.stateManager.refRows[widget.stateManager.currentCellPosition!.rowIdx!].cells['unitNo'],
+          widget.stateManager.currentCellPosition!.rowIdx!,
+        );
+        return KeyEventResult.handled;
+      }
+      if (keyManager.isRight) {
+        widget.stateManager.setCurrentCell(
+          widget.stateManager.refRows[widget.stateManager.currentCellPosition!.rowIdx!].cells['name'],
+          widget.stateManager.currentCellPosition!.rowIdx!,
+        );
+        return KeyEventResult.handled;
+      }
     }
 
     widget.stateManager.keyManager!.subject.add(keyManager);
@@ -180,10 +195,18 @@ class _PlutoDropDownCellState extends State<PlutoDropDownCell> {
     if (result == null) {
       return;
     }
-    setState(() {
-      focusNode.unfocus();
-      widget.stateManager.changeCellValue(widget.cell, result);
-    });
+
+    if (widget.cell.value != result) {
+      widget.stateManager.changeCellValue(widget.cell, result, notify: false);
+    }
+
+    widget.stateManager.setCurrentCell(
+        widget.stateManager.refRows[widget.stateManager.currentCellPosition!.rowIdx!].cells['name'],
+        widget.stateManager.currentCellPosition!.rowIdx!,
+        notify: false
+    );
+    widget.stateManager.setKeepFocus(true, notify: false);
+    widget.stateManager.setEditing(true);
   }
 
   @override
@@ -206,7 +229,7 @@ class _PlutoDropDownCellState extends State<PlutoDropDownCell> {
             shape: const RoundedRectangleBorder(),
             elevation: 0,
             backgroundColor: Colors.transparent,
-            foregroundColor: prevFocus ? appColorPrimary100 : appColorGreySecondaryText,
+            foregroundColor: prevFocus ? appColorPrimary20 : appColorGreySecondaryText,
             side: BorderSide.none,
           ),
           onPressed: () async {

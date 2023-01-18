@@ -1230,7 +1230,7 @@ class _GridContainer extends StatelessWidget {
             ),
           ),
           child: Padding(
-            padding: const EdgeInsets.all(PlutoGridSettings.gridPadding),
+            padding: const EdgeInsets.only(left: 2),    /// 우측 이중선 제거용 패딩.
             child: borderRadius == BorderRadius.zero
                 ? child
                 : ClipRRect(borderRadius: borderRadius, child: child),

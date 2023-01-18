@@ -263,7 +263,9 @@ class _CellContainerState extends PlutoStateWithChange<_CellContainer> {
           selectingMode: selectingMode,
         ),
         border: hasFocus        /// 셀을 한번 선택 후, 드랍다운 눌렀을 시, 우측 border 사라짐 이슈 방지.
-            ? Border.all(color: activatedBorderColor, width: 2)
+            ? stateManager.currentCell!.hasError
+                ? null
+                : Border.all(color: activatedBorderColor, width: 2)
             : Border(right: BorderSide(color: borderColor)),
       );
     } else if (isSelectedCell) {  /// PlutoGridSelectingMode 가 cell or horizontal 일 때.

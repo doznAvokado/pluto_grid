@@ -16,6 +16,8 @@ class PlutoCell {
 
   final bool _isLastOfRow;
 
+  bool _hasError = false;
+
   final Key _key;
 
   dynamic _value;
@@ -39,6 +41,15 @@ class PlutoCell {
   bool get isFirstOfRow => _isFirstOfRow;
 
   bool get isLastOfRow => _isLastOfRow;
+
+  bool get hasError => _hasError;
+
+  set hasError(bool isError) {
+    if (_hasError == isError) {
+      return;
+    }
+    _hasError = isError;
+  }
 
   Key get key => _key;
 

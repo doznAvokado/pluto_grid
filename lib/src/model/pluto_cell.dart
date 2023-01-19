@@ -6,15 +6,19 @@ class PlutoCell {
     dynamic value,
     bool isFirstOfRow = false,
     bool isLastOfRow = false,
+    bool isNewCell = false,
     Key? key,
   })  : _key = key ?? UniqueKey(),
         _value = value,
         _isFirstOfRow = isFirstOfRow,
-        _isLastOfRow = isLastOfRow;
+        _isLastOfRow = isLastOfRow,
+        _isNewCell = isNewCell;
 
   final bool _isFirstOfRow;
 
   final bool _isLastOfRow;
+
+  bool _isNewCell = false;
 
   bool _hasError = false;
 
@@ -41,6 +45,10 @@ class PlutoCell {
   bool get isFirstOfRow => _isFirstOfRow;
 
   bool get isLastOfRow => _isLastOfRow;
+
+  bool get isNewCell => _isNewCell;
+
+  set isNewCell(bool isNew) => _isNewCell = isNew;
 
   bool get hasError => _hasError;
 

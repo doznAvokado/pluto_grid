@@ -3,7 +3,23 @@ import 'package:intl/intl.dart' as intl;
 
 abstract class PlutoColumnType {
   dynamic get defaultValue;
-  
+
+  factory PlutoColumnType.autoComplete({
+    dynamic defaultValue,
+    bool isOnlyDigits = false,
+    List<String> items = const [],
+    double listHeight = 36 * 5,
+    double itemHeight = 36,
+  }) {
+    return PlutoColumnTypeAutoComplete(
+      defaultValue: defaultValue,
+      isOnlyDigits: isOnlyDigits,
+      items: items,
+      listHeight: listHeight,
+      itemHeight: itemHeight,
+    );
+  }
+
   factory PlutoColumnType.dropdown({
     dynamic defaultValue,
     required List<dynamic> items,
@@ -189,6 +205,9 @@ abstract class PlutoColumnType {
 }
 
 extension PlutoColumnTypeExtension on PlutoColumnType {
+
+  bool get isAutoComplete => this is PlutoColumnTypeAutoComplete;
+
   bool get isDropdown => this is PlutoColumnTypeDropDown;
   
   bool get isText => this is PlutoColumnTypeText;
@@ -202,6 +221,14 @@ extension PlutoColumnTypeExtension on PlutoColumnType {
   bool get isDate => this is PlutoColumnTypeDate;
 
   bool get isTime => this is PlutoColumnTypeTime;
+
+  PlutoColumnTypeAutoComplete get autoComplete {
+    if (this is! PlutoColumnTypeAutoComplete) {
+      throw TypeError();
+    }
+
+    return this as PlutoColumnTypeAutoComplete;
+  }
 
   PlutoColumnTypeDropDown get dropdown {
     if (this is! PlutoColumnTypeDropDown) {
@@ -268,6 +295,36 @@ extension PlutoColumnTypeExtension on PlutoColumnType {
       hasFormat ? (this as PlutoColumnTypeHasFormat).applyFormat(value) : value;
 }
 
+class PlutoColumnTypeAutoComplete implements PlutoColumnType {
+  @override
+  final dynamic defaultValue;
+  final bool isOnlyDigits;
+  final List<String> items;
+  final double listHeight;
+  final double itemHeight;
+
+
+  PlutoColumnTypeAutoComplete({
+    this.defaultValue,
+    required this.items,
+    required this.isOnlyDigits,
+    this.listHeight = 36 * 5,
+    this.itemHeight = 36,
+  });
+
+  @override
+  bool isValid(dynamic value) => value.toString().isNotEmpty;
+
+  @override
+  int compare(dynamic a, dynamic b) {
+    return _compareWithNull(a, b, () => a.toString().compareTo(b.toString()));
+  }
+
+  @override
+  dynamic makeCompareValue(dynamic v) {
+    return v.toString();
+  }
+}
 
 class PlutoColumnTypeDropDown implements PlutoColumnType, PlutoColumnTypeHasPopupIcon {
   @override

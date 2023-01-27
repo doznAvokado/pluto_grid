@@ -405,6 +405,13 @@ class _CellState extends PlutoStateWithChange<_Cell> {
           column: widget.column,
           row: widget.row,
         );
+      } else if (widget.column.type.isAutoComplete) {
+        return PlutoAutoCompleteTextCell(
+          stateManager: stateManager,
+          cell: widget.cell,
+          column: widget.column,
+          row: widget.row,
+        );
       }
     }
 

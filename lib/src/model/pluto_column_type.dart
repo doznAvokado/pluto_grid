@@ -313,7 +313,7 @@ class PlutoColumnTypeAutoComplete implements PlutoColumnType {
   });
 
   @override
-  bool isValid(dynamic value) => value.toString().isNotEmpty;
+  bool isValid(dynamic value) => items.contains(value.toString());
 
   @override
   int compare(dynamic a, dynamic b) {

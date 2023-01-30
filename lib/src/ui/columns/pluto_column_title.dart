@@ -354,6 +354,22 @@ class _ColumnWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Widget? customRendererWidget;
+    if (column.enableRowChecked) {
+      customRendererWidget = stateManager.currentCellPosition == null
+          ? column.renderer!(PlutoColumnRendererContext(      /// create fake row, cell
+              column: column,
+              rowIdx: -1,
+              row: PlutoRow(cells: {}),
+              cell: PlutoCell(),stateManager: stateManager))
+          : column.renderer!(PlutoColumnRendererContext(
+              column: column,
+              rowIdx: stateManager.currentCellPosition!.rowIdx!,
+              row: stateManager.rows[stateManager.currentCellPosition!.rowIdx!],
+              cell: stateManager.currentCell!,
+              stateManager: stateManager));
+    }
+
     return DragTarget<PlutoColumn>(
       onWillAccept: (PlutoColumn? columnToDrag) {
         return columnToDrag != null &&
@@ -394,14 +410,23 @@ class _ColumnWidget extends StatelessWidget {
                 child: Row(
                   children: [
                     if (column.enableRowChecked)
-                      CheckboxAllSelectionWidget(stateManager: stateManager),
-                    Expanded(
-                      child: _ColumnTextWidget(
-                        column: column,
-                        stateManager: stateManager,
-                        height: height,
+                      Expanded(
+                        child: Center(
+                          child: CustomCheckboxAllSelectionWidget(
+                            stateManager: stateManager,
+                            customIcon: customRendererWidget,
+                          )
+                        )
                       ),
-                    ),
+                    if (!column.enableRowChecked)
+                      Expanded(
+                        child: _ColumnTextWidget(
+                          column: column,
+                          stateManager: stateManager,
+                          height: height,
+                        ),
+                      ),
+
                     if (showSizedBoxForIcon) SizedBox(width: style.iconSize),
                   ],
                 ),
@@ -479,6 +504,80 @@ class CheckboxAllSelectionWidgetState
       unselectedColor: stateManager.configuration.style.iconColor,
       activeColor: stateManager.configuration.style.activatedBorderColor,
       checkColor: stateManager.configuration.style.activatedColor,
+    );
+  }
+}
+
+
+class CustomCheckboxAllSelectionWidget extends PlutoStatefulWidget {
+  final PlutoGridStateManager stateManager;
+  final Widget? customIcon;
+
+  const CustomCheckboxAllSelectionWidget({
+    required this.stateManager,
+    required this.customIcon,
+    Key? key
+  })
+      : super(key: key);
+
+  @override
+  CustomCheckboxAllSelectionWidgetState createState() => CustomCheckboxAllSelectionWidgetState();
+}
+
+class CustomCheckboxAllSelectionWidgetState extends PlutoStateWithChange<CustomCheckboxAllSelectionWidget> {
+  bool? _checked;
+
+  @override
+  PlutoGridStateManager get stateManager => widget.stateManager;
+
+  @override
+  void initState() {
+    super.initState();
+
+    updateState(PlutoNotifierEventForceUpdate.instance);
+  }
+
+  @override
+  void updateState(PlutoNotifierEvent event) {
+    _checked = update<bool?>(
+      _checked,
+      stateManager.tristateCheckedRow,
+    );
+  }
+
+  void _handleOnChanged(bool? changed) {
+    if (changed == _checked) {
+      return;
+    }
+
+    changed ??= false;
+
+    if (_checked == null) changed = true;
+
+    stateManager.toggleAllRowChecked(changed);
+
+    if (stateManager.onRowChecked != null) {
+      stateManager.onRowChecked!(
+        PlutoGridOnRowCheckedAllEvent(isChecked: changed),
+      );
+    }
+
+    setState(() {
+      _checked = changed;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return PlutoCustomCheckbox(
+      value: _checked,
+      handleOnChanged: _handleOnChanged,
+      tristate: false,
+      scale: 1,
+      unselectedColor: stateManager.configuration.style.iconColor,
+      activeColor: stateManager.configuration.style.activatedBorderColor,
+      checkColor: stateManager.configuration.style.activatedColor,
+      customCheckboxIcon: widget.customIcon,
     );
   }
 }

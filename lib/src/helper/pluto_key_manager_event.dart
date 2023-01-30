@@ -137,6 +137,7 @@ const _characters = {
   0x0000000058, // keyX,
   0x0000000059, // keyY,
   0x000000005a, // keyZ,
+
   0x0000000061, // keyA,
   0x0000000062, // keyB,
   0x0000000063, // keyC,
@@ -185,26 +186,67 @@ const _characters = {
   0x000000002c, // comma,
   0x000000002e, // period,
   0x000000002f, // slash,
-  0x0100070054, // numpadDivide,
-  0x0100070055, // numpadMultiply,
-  0x0100070056, // numpadSubtract,
-  0x0100070057, // numpadAdd,
-  0x0100070059, // numpad1,
-  0x010007005a, // numpad2,
-  0x010007005b, // numpad3,
-  0x010007005c, // numpad4,
-  0x010007005d, // numpad5,
-  0x010007005e, // numpad6,
-  0x010007005f, // numpad7,
-  0x0100070060, // numpad8,
-  0x0100070061, // numpad9,
-  0x0100070062, // numpad0,
-  0x0100070063, // numpadDecimal,
+
+  /// lib numpad 값 맞지않음.
+  // 0x0100070054, // numpadDivide,
+  // 0x0100070055, // numpadMultiply,
+  // 0x0100070056, // numpadSubtract,
+  // 0x0100070057, // numpadAdd,
+  // 0x0100070059, // numpad1,
+  // 0x010007005a, // numpad2,
+  // 0x010007005b, // numpad3,
+  // 0x010007005c, // numpad4,
+  // 0x010007005d, // numpad5,
+  // 0x010007005e, // numpad6,
+  // 0x010007005f, // numpad7,
+  // 0x0100070060, // numpad8,
+  // 0x0100070061, // numpad9,
+  // 0x0100070062, // numpad0,
+  // 0x0100070063, // numpadDecimal,
+  // 0x0100070067, // numpadEqual,
+  // 0x0100070085, // numpadComma,
+  // 0x01000700b6, // numpadParenLeft,
+  // 0x01000700b7, // numpadParenRight,
+
+  0x00200000230, /// numpad 0
+  0x00200000231, /// numpad 1
+  0x00200000232, /// numpad 2
+  0x00200000233, /// numpad 3
+  0x00200000234, /// numpad 4
+  0x00200000235, /// numpad 5
+  0x00200000236, /// numpad 6
+  0x00200000237, /// numpad 7
+  0x00200000238, /// numpad 8
+  0x00200000239, /// numpad 9
+
   0x0100070064, // intlBackslash,
-  0x0100070067, // numpadEqual,
-  0x0100070085, // numpadComma,
   0x0100070087, // intlRo,
   0x0100070089, // intlYen,
-  0x01000700b6, // numpadParenLeft,
-  0x01000700b7, // numpadParenRight,
+
+  12593,  // ㄱ
+  12596,  // ㄴ
+  12599,  // ㄷ
+  12601,  // ㄹ
+  12609,  // ㅁ
+  12610,  // ㅂ
+  12613,  // ㅅ
+  12615,  // ㅇ
+  12616,  // ㅈ
+  12618,  // ㅊ
+  12619,  // ㅋ
+  12620,  // ㅌ
+  12621,  // ㅍ
+  12622,  // ㅎ
+  12623,  // ㅏ
+  12625,  // ㅑ
+  12627,  // ㅓ
+  12629,  // ㅕ
+  12631,  // ㅗ
+  12635,  // ㅛ
+  12636,  // ㅜ
+  12640,  // ㅠ
+  12641,  // ㅡ
+  12643,  // ㅣ
+  12628,  // ㅔ
+  12624,  // ㅐ
 };

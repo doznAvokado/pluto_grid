@@ -222,7 +222,7 @@ class _CellContainerState extends PlutoStateWithChange<_CellContainer> {
     required PlutoGridSelectingMode selectingMode,
   }) {
     if (!hasFocus) {
-      return gridBackgroundColor;
+      return Colors.transparent;    /// 셀 선택 후 드랍다운 눌러서, 셀과 함께 그리드 조차도 포커스 아웃일 때 선택했던 셀 배경색.
     }
 
     if (!isEditing) {
@@ -232,6 +232,7 @@ class _CellContainerState extends PlutoStateWithChange<_CellContainer> {
     return readOnly == true ? cellColorInReadOnlyState : cellColorInEditState;
   }
 
+  /// 셀 Decoration 옵션
   BoxDecoration _boxDecoration({
     required bool hasFocus,
     required bool readOnly,
@@ -250,7 +251,9 @@ class _CellContainerState extends PlutoStateWithChange<_CellContainer> {
     required Color? cellColorGroupedRow,
     required PlutoGridSelectingMode selectingMode,
   }) {
-    if (isCurrentCell) {
+    const Color appColorsWrong = Color(0xffff4e4e);
+
+    if (isCurrentCell) {          /// 현재 한번 선택한 셀 Border
       return BoxDecoration(
         color: _currentCellColor(
           hasFocus: hasFocus,
@@ -262,12 +265,15 @@ class _CellContainerState extends PlutoStateWithChange<_CellContainer> {
           cellColorInEditState: cellColorInEditState,
           selectingMode: selectingMode,
         ),
-        border: Border.all(
-          color: hasFocus ? activatedBorderColor : inactivatedBorderColor,
-          width: 1,
-        ),
+        border: hasFocus
+            ? isEditing
+                ? Border.all(color: activatedBorderColor, width: 2)     /// 셀 편집모드 스타일
+                : stateManager.currentCell!.hasError
+                    ? Border.all(color: appColorsWrong, width: 2)
+                    : Border.all(color: activatedBorderColor, width: 2)
+            : Border(right: BorderSide(color: borderColor)),            /// 셀을 한번 선택 후, 드랍다운 눌렀을 시, 우측 border 사라짐 이슈 방지.
       );
-    } else if (isSelectedCell) {
+    } else if (isSelectedCell) {  /// PlutoGridSelectingMode 가 cell or horizontal 일 때.
       return BoxDecoration(
         color: activatedColor,
         border: Border.all(
@@ -387,6 +393,20 @@ class _CellState extends PlutoStateWithChange<_Cell> {
         );
       } else if (widget.column.type.isCurrency) {
         return PlutoCurrencyCell(
+          stateManager: stateManager,
+          cell: widget.cell,
+          column: widget.column,
+          row: widget.row,
+        );
+      } else if (widget.column.type.isDropdown) {
+        return PlutoDropDownCell(
+          stateManager: stateManager,
+          cell: widget.cell,
+          column: widget.column,
+          row: widget.row,
+        );
+      } else if (widget.column.type.isAutoComplete) {
+        return PlutoAutoCompleteTextCell(
           stateManager: stateManager,
           cell: widget.cell,
           column: widget.column,

@@ -98,6 +98,8 @@ class PlutoGridKeyManager {
   }
 
   void _handleCharacter(PlutoKeyManagerEvent keyEvent) {
+    String onlyNumberRegExp = r"^[0-9]$";
+
     if (stateManager.isEditing != true && stateManager.currentCell != null) {
       stateManager.setEditing(true);
 
@@ -107,7 +109,33 @@ class PlutoGridKeyManager {
 
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (stateManager.textEditingController != null) {
-          stateManager.textEditingController!.text = keyEvent.event.character!;
+          if (stateManager.currentCell!.column.type.isText) {
+            if (stateManager.currentCell!.column.type.text.isOnlyDigits) {
+              if (RegExp(onlyNumberRegExp).hasMatch(keyEvent.event.character.toString())) {
+                stateManager.textEditingController!.text = keyEvent.event.character!;
+              } else {
+                stateManager.textEditingController!.text = '';
+              }
+            } else {
+              stateManager.textEditingController!.text =
+              keyEvent.event.character!;
+            }
+          } else if (stateManager.currentCell!.column.type.isAutoComplete) {
+            if (stateManager.currentCell!.column.type.autoComplete.isOnlyDigits) {
+              if (RegExp(onlyNumberRegExp).hasMatch(keyEvent.event.character.toString())) {
+                stateManager.textEditingController!.text =
+                keyEvent.event.character!;
+              } else {
+                stateManager.textEditingController!.text = '';
+              }
+            } else {
+              stateManager.textEditingController!.text =
+              keyEvent.event.character!;
+            }
+          } else {
+            stateManager.textEditingController!.text =
+            keyEvent.event.character!;
+          }
         }
       });
     }

@@ -7,6 +7,7 @@ abstract class PlutoColumnType {
   factory PlutoColumnType.autoComplete({
     dynamic defaultValue,
     bool isOnlyDigits = false,
+    int? maxLength,
     List<String> items = const [],
     double listHeight = 36 * 5,
     double itemHeight = 36,
@@ -14,6 +15,7 @@ abstract class PlutoColumnType {
     return PlutoColumnTypeAutoComplete(
       defaultValue: defaultValue,
       isOnlyDigits: isOnlyDigits,
+      maxLength: maxLength,
       items: items,
       listHeight: listHeight,
       itemHeight: itemHeight,
@@ -46,12 +48,14 @@ abstract class PlutoColumnType {
   factory PlutoColumnType.text({
     dynamic defaultValue = '',
     bool isOnlyDigits = false,
+    int? maxLength,
     int? validLength,
     String? validRegExp,
   }) {
     return PlutoColumnTypeText(
         defaultValue: defaultValue,
         isOnlyDigits: isOnlyDigits,
+        maxLength: maxLength,
         validLength: validLength,
         validRegExp: validRegExp);
   }
@@ -299,6 +303,7 @@ class PlutoColumnTypeAutoComplete implements PlutoColumnType {
   @override
   final dynamic defaultValue;
   final bool isOnlyDigits;
+  final int? maxLength;
   final List<String> items;
   final double listHeight;
   final double itemHeight;
@@ -308,6 +313,7 @@ class PlutoColumnTypeAutoComplete implements PlutoColumnType {
     this.defaultValue,
     required this.items,
     required this.isOnlyDigits,
+    this.maxLength,
     this.listHeight = 36 * 5,
     this.itemHeight = 36,
   });
@@ -368,6 +374,7 @@ class PlutoColumnTypeDropDown implements PlutoColumnType, PlutoColumnTypeHasPopu
 
 class PlutoColumnTypeText implements PlutoColumnType {
   final bool isOnlyDigits;
+  final int? maxLength;
   final int? validLength;
   final String? validRegExp;
 
@@ -377,6 +384,7 @@ class PlutoColumnTypeText implements PlutoColumnType {
   const PlutoColumnTypeText({
     this.defaultValue,
     this.isOnlyDigits = false,
+    this.maxLength,
     this.validLength,
     this.validRegExp,
   });

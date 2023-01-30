@@ -261,10 +261,12 @@ mixin TextCellState<T extends TextCell> on State<T> implements TextFieldProps {
       readOnly: widget.column.checkReadOnly(widget.row, widget.cell),
       onChanged: _handleOnChanged,
       onEditingComplete: _handleOnComplete,
+      maxLength: widget.column.type.text.maxLength,
       onSubmitted: (_) => _handleOnComplete(),
       onTap: _handleOnTap,
       style: widget.stateManager.configuration.style.cellTextStyle,
       decoration: const InputDecoration(
+        counterText: '',
         border: OutlineInputBorder(
           borderSide: BorderSide.none,
         ),
@@ -716,8 +718,10 @@ mixin AutoCompleteTextCellState<T extends AutoCompleteTextCell> on State<T> impl
         onEditingComplete: _handleOnComplete,
         onSubmitted: (_) => _handleOnComplete(),
         onTap: _handleOnTap,
+        maxLength: widget.column.type.autoComplete.maxLength,
         style: widget.stateManager.configuration.style.cellTextStyle,
         decoration: const InputDecoration(
+          counterText: '',
           border: OutlineInputBorder(
             borderSide: BorderSide.none,
           ),

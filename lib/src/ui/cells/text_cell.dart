@@ -812,13 +812,16 @@ class _AutocompleteOptions<T extends Object> extends StatelessWidget {
         borderRadius: BorderRadius.circular(10),
         color: Colors.white,
         elevation: 4.0,
-        child: DecoratedBox(
+        child: Container(
+          constraints: BoxConstraints(
+            maxWidth: maxOptionsWidth,
+            maxHeight: maxOptionsHeight
+          ),
           decoration: BoxDecoration(
             color: Colors.white,
             border: Border.all(
               color: appColorGreyBorder,
-              width: 1,
-              strokeAlign: StrokeAlign.outside),
+              width: 1),
             borderRadius: BorderRadius.circular(10),
             boxShadow: [
               BoxShadow(
@@ -828,50 +831,44 @@ class _AutocompleteOptions<T extends Object> extends StatelessWidget {
               )
             ],
           ),
-          child: ConstrainedBox(
-            constraints: BoxConstraints(
-              maxWidth: maxOptionsWidth,
-              maxHeight: maxOptionsHeight
-            ),
-            child: ListView.builder(
-              padding: const EdgeInsets.symmetric(vertical: 10),
-              shrinkWrap: true,
-              itemCount: options.length,
-              itemBuilder: (BuildContext context, int index) {
-                final T option = options.elementAt(index);
-                return InkWell(
-                  onTap: () {
-                    onSelected(option);
-                  },
-                  child: Builder(builder: (BuildContext context) {
-                    final bool highlight =
-                        AutocompleteHighlightedOption.of(context) == index;
+          child: ListView.builder(
+            padding: const EdgeInsets.symmetric(vertical: 10),
+            shrinkWrap: true,
+            itemCount: options.length,
+            itemBuilder: (BuildContext context, int index) {
+              final T option = options.elementAt(index);
+              return InkWell(
+                onTap: () {
+                  onSelected(option);
+                },
+                child: Builder(builder: (BuildContext context) {
+                  final bool highlight =
+                      AutocompleteHighlightedOption.of(context) == index;
 
-                    if (highlight) {
-                      SchedulerBinding.instance
-                          .addPostFrameCallback((Duration timeStamp) {
-                        Scrollable.ensureVisible(context, alignment: 0.5);
-                      });
-                    }
+                  if (highlight) {
+                    SchedulerBinding.instance
+                        .addPostFrameCallback((Duration timeStamp) {
+                      Scrollable.ensureVisible(context, alignment: 0.5);
+                    });
+                  }
 
-                    return Container(
-                      color: highlight ? appColorPrimary20 : null,
-                      height: itemHeight,
-                      child: Center(
+                  return Container(
+                    color: highlight ? appColorPrimary20 : null,
+                    height: itemHeight,
+                    child: Center(
                         child: Text(
-                          displayStringForOption(option),
-                          style: highlight
-                            ? itemDefaultTextStyle.copyWith(
+                            displayStringForOption(option),
+                            style: highlight
+                                ? itemDefaultTextStyle.copyWith(
                                 fontWeight: FontWeight.w700,
                                 color: appColorPrimary100)
-                            : itemDefaultTextStyle.copyWith(
+                                : itemDefaultTextStyle.copyWith(
                                 color: appColorGreyPrimaryText))
-                      ),
-                    );
-                  }),
-                );
-              },
-            ),
+                    ),
+                  );
+                }),
+              );
+            },
           ),
         ),
       ),

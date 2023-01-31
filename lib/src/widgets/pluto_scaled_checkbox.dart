@@ -147,7 +147,6 @@ class _CustomCheckbox extends StatelessWidget {
                       BorderSide(
                         width: 1,
                         color: appColorGreyBorder,
-                        strokeAlign: StrokeAlign.inside,
                       ),
                     ),
                   ),
@@ -181,7 +180,6 @@ class _CustomCheckbox extends StatelessWidget {
                           BorderSide(
                             width: 1,
                             color: appColorGreyBorder,
-                            strokeAlign: StrokeAlign.inside,
                           ),
                         ),
                 ),

@@ -194,6 +194,11 @@ mixin TextCellState<T extends TextCell> on State<T> implements TextFieldProps {
         widget.stateManager.currentCellPosition!.rowIdx! + 1,
       );
     }
+
+    if (isEndOfOneRow && isLastRow && widget.stateManager.isEditing) {
+      widget.stateManager.setEditing(false);
+      FocusScope.of(context).unfocus();
+    }
   }
 
   KeyEventResult _handleOnKey(FocusNode node, RawKeyEvent event) {

@@ -72,28 +72,24 @@ mixin TextCellState<T extends TextCell> on State<T> implements TextFieldProps {
 
   @override
   void dispose() {
-    _debounce.dispose();
-
-    _textController.dispose();
-
-    cellFocus.dispose();
-
     /**
      * Saves the changed value when moving a cell while text is being input.
      * if user do not press enter key, onEditingComplete is not called and the value is not saved.
      */
     if (_cellEditingStatus.isChanged) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        _changeValue(notify: false);
-
-        widget.stateManager.notifyListenersOnPostFrame();
-      });
+      _changeValue();
     }
 
     if (!widget.stateManager.isEditing ||
         widget.stateManager.currentColumn?.enableEditingMode != true) {
       widget.stateManager.setTextEditingController(null);
     }
+
+    _debounce.dispose();
+
+    _textController.dispose();
+
+    cellFocus.dispose();
 
     super.dispose();
   }
@@ -140,28 +136,22 @@ mixin TextCellState<T extends TextCell> on State<T> implements TextFieldProps {
     return false;
   }
 
-  void _changeValue({bool notify = true}) {
+  void _changeValue() {
     if (formattedValue == _textController.text) {
       return;
     }
 
-    widget.stateManager.changeCellValue(
-      widget.cell,
-      _textController.text,
-      notify: notify,
+    widget.stateManager.changeCellValue(widget.cell, _textController.text);
+
+    _textController.text = formattedValue;
+
+    _initialCellValue = _textController.text;
+
+    _textController.selection = TextSelection.fromPosition(
+      TextPosition(offset: _textController.text.length),
     );
 
-    if (notify) {
-      _textController.text = formattedValue;
-
-      _initialCellValue = _textController.text;
-
-      _textController.selection = TextSelection.fromPosition(
-        TextPosition(offset: _textController.text.length),
-      );
-
-      _cellEditingStatus = _CellEditingStatus.updated;
-    }
+    _cellEditingStatus = _CellEditingStatus.updated;
   }
 
   void _handleOnChanged(String value) {
@@ -381,28 +371,25 @@ mixin AutoCompleteTextCellState<T extends AutoCompleteTextCell> on State<T> impl
 
   @override
   void dispose() {
-    _debounce.dispose();
-    textController
-        .removeListener(() => _onChangedField(textController.text.toString()));
-    textController.dispose();
-    cellFocus.removeListener(_onChangedFocus);
-    cellFocus.dispose();
-
     /**
      * Saves the changed value when moving a cell while text is being input.
      * if user do not press enter key, onEditingComplete is not called and the value is not saved.
      */
     if (_cellEditingStatus.isChanged) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        _changeValue(notify: false);
-        widget.stateManager.notifyListenersOnPostFrame();
-      });
+      _changeValue();
     }
 
     if (!widget.stateManager.isEditing ||
         widget.stateManager.currentColumn?.enableEditingMode != true) {
       widget.stateManager.setTextEditingController(null);
     }
+
+    _debounce.dispose();
+    textController
+        .removeListener(() => _onChangedField(textController.text.toString()));
+    textController.dispose();
+    cellFocus.removeListener(_onChangedFocus);
+    cellFocus.dispose();
 
     /// overlay dispose
     _floatingOptions?.remove();
@@ -453,28 +440,22 @@ mixin AutoCompleteTextCellState<T extends AutoCompleteTextCell> on State<T> impl
     return false;
   }
 
-  void _changeValue({bool notify = true}) {
+  void _changeValue() {
     if (formattedValue == textController.text) {
       return;
     }
 
-    widget.stateManager.changeCellValue(
-      widget.cell,
-      textController.text,
-      notify: notify,
+    widget.stateManager.changeCellValue(widget.cell, textController.text);
+
+    textController.text = formattedValue;
+
+    _initialCellValue = textController.text;
+
+    textController.selection = TextSelection.fromPosition(
+      TextPosition(offset: textController.text.length),
     );
 
-    if (notify) {
-      textController.text = formattedValue;
-
-      _initialCellValue = textController.text;
-
-      textController.selection = TextSelection.fromPosition(
-        TextPosition(offset: textController.text.length),
-      );
-
-      _cellEditingStatus = _CellEditingStatus.updated;
-    }
+    _cellEditingStatus = _CellEditingStatus.updated;
   }
 
   // Called from fieldViewBuilder when the user submits the field.

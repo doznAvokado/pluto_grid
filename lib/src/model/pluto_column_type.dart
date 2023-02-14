@@ -33,17 +33,17 @@ abstract class PlutoColumnType {
     Widget? defaulticon,
   }) {
     return PlutoColumnTypeDropDown(
-        defaultValue: defaultValue,
-        items: items,
-        toValue: toValue,
-        onChanged: onChanged,
-        enableColumnFilter : enableColumnFilter,
-        popupIcon : popupIcon,
-        focusedIcon : focusedIcon,
-        defaulticon : defaulticon,
+      defaultValue: defaultValue,
+      items: items,
+      toValue: toValue,
+      onChanged: onChanged,
+      enableColumnFilter: enableColumnFilter,
+      popupIcon: popupIcon,
+      focusedIcon: focusedIcon,
+      defaulticon: defaulticon,
     );
   }
-  
+
   /// Set as a string column.
   factory PlutoColumnType.text({
     dynamic defaultValue = '',
@@ -209,11 +209,10 @@ abstract class PlutoColumnType {
 }
 
 extension PlutoColumnTypeExtension on PlutoColumnType {
-
   bool get isAutoComplete => this is PlutoColumnTypeAutoComplete;
 
   bool get isDropdown => this is PlutoColumnTypeDropDown;
-  
+
   bool get isText => this is PlutoColumnTypeText;
 
   bool get isNumber => this is PlutoColumnTypeNumber;
@@ -304,10 +303,9 @@ class PlutoColumnTypeAutoComplete implements PlutoColumnType {
   final dynamic defaultValue;
   final bool isOnlyDigits;
   final int? maxLength;
-  final List<String> items;
+  List<String> items;
   final double listHeight;
   final double itemHeight;
-
 
   PlutoColumnTypeAutoComplete({
     this.defaultValue,
@@ -332,20 +330,21 @@ class PlutoColumnTypeAutoComplete implements PlutoColumnType {
   }
 }
 
-class PlutoColumnTypeDropDown implements PlutoColumnType, PlutoColumnTypeHasPopupIcon {
+class PlutoColumnTypeDropDown
+    implements PlutoColumnType, PlutoColumnTypeHasPopupIcon {
   @override
   final dynamic defaultValue;
   final List<dynamic> items;
   final String? toValue;
   final void Function(dynamic value)? onChanged;
   final bool enableColumnFilter;
-  
+
   @override
   final IconData? popupIcon;
-  
+
   final Widget? focusedIcon;
   final Widget? defaulticon;
-  
+
   PlutoColumnTypeDropDown({
     this.defaultValue,
     required this.items,
@@ -369,7 +368,6 @@ class PlutoColumnTypeDropDown implements PlutoColumnType, PlutoColumnTypeHasPopu
   dynamic makeCompareValue(dynamic v) {
     return v.toString();
   }
-
 }
 
 class PlutoColumnTypeText implements PlutoColumnType {
@@ -394,14 +392,11 @@ class PlutoColumnTypeText implements PlutoColumnType {
     if (validLength != null) {
       return (value is String || value is num) &&
           (value.toString().length == validLength);
-    }
-    else if (validRegExp != null) {
+    } else if (validRegExp != null) {
       return (value is String || value is num) &&
           (RegExp(validRegExp!).hasMatch(value.toString()));
-    }
-    else {
-      return (value is String || value is num) &&
-          value.toString().isNotEmpty;
+    } else {
+      return (value is String || value is num) && value.toString().isNotEmpty;
     }
   }
 

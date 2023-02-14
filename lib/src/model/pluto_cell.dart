@@ -99,6 +99,12 @@ class PlutoCell {
     return _valueForSorting;
   }
 
+  void setAutoCompleteColumnItemList(List<String> newItem) {
+    if (_column != null && _column!.type.isAutoComplete) {
+      _column!.type.autoComplete.items = newItem;
+    }
+  }
+
   void setColumn(PlutoColumn column) {
     _column = column;
     _valueForSorting = _getValueForSorting();

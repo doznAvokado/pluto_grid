@@ -175,12 +175,19 @@ mixin TextCellState<T extends TextCell> on State<T> implements TextFieldProps {
     });
 
     /// 한 행의 끝에서 다음 행으로 포커스 이동 로직.
-    bool isEndOfOneRow = widget.stateManager.currentCellPosition!.columnIdx! == widget.stateManager.refColumns.length -1;
-    bool isLastRow = widget.stateManager.currentCellPosition!.rowIdx! == widget.stateManager.rows.length - 1;
+    bool isEndOfOneRow = widget.stateManager.currentCellPosition!.columnIdx! ==
+        widget.stateManager.refColumns.length - 1;
+    bool isLastRow = widget.stateManager.currentCellPosition!.rowIdx! ==
+        widget.stateManager.rows.length - 1;
 
-    if(isEndOfOneRow && !isLastRow) {
+    if (isEndOfOneRow && !isLastRow) {
       widget.stateManager.setCurrentCell(
-        widget.stateManager.refRows[widget.stateManager.currentCellPosition!.rowIdx! + 1].cells.values.firstWhere((e) => e.isFirstOfRow == true),
+        widget
+            .stateManager
+            .refRows[widget.stateManager.currentCellPosition!.rowIdx! + 1]
+            .cells
+            .values
+            .firstWhere((e) => e.isFirstOfRow == true),
         widget.stateManager.currentCellPosition!.rowIdx! + 1,
       );
     }
@@ -294,7 +301,6 @@ enum _CellEditingStatus {
   }
 }
 
-
 abstract class AutoCompleteTextCell extends StatefulWidget {
   final PlutoGridStateManager stateManager;
 
@@ -319,7 +325,8 @@ abstract class AutoCompleteTextFieldProps {
   List<TextInputFormatter>? get inputFormatters;
 }
 
-mixin AutoCompleteTextCellState<T extends AutoCompleteTextCell> on State<T> implements AutoCompleteTextFieldProps {
+mixin AutoCompleteTextCellState<T extends AutoCompleteTextCell> on State<T>
+    implements AutoCompleteTextFieldProps {
   dynamic _initialCellValue;
   TextEditingController textController = TextEditingController();
   final PlutoDebounceByHashCode _debounce = PlutoDebounceByHashCode();
@@ -335,19 +342,24 @@ mixin AutoCompleteTextCellState<T extends AutoCompleteTextCell> on State<T> impl
   String get formattedValue =>
       widget.column.formattedValueForDisplayInEditing(widget.cell.value);
 
-
   /// ---- AutoComplete 관련 variables
   final LayerLink _optionsLayerLink = LayerLink();
   final ValueNotifier<int> _highlightedOptionIndex = ValueNotifier<int>(0);
   Iterable<String> _options = Iterable<String>.empty();
-  OverlayEntry? _floatingOptions;     /// AutoCompleteItemList Container
+
+  /// AutoCompleteItemList Container
+  OverlayEntry? _floatingOptions;
+
   String? _selection;
   bool _userHidOptions = false;
   String _lastFieldText = '';
   bool _floatingOptionsUpdateScheduled = false;
 
   bool get _shouldShowOptions {
-    return !_userHidOptions && cellFocus.hasFocus && _selection == null && _options.isNotEmpty;
+    return !_userHidOptions &&
+        cellFocus.hasFocus &&
+        _selection == null &&
+        _options.isNotEmpty;
   }
 
   @override
@@ -364,7 +376,7 @@ mixin AutoCompleteTextCellState<T extends AutoCompleteTextCell> on State<T> impl
         .addListener(() => _onChangedField(textController.text.toString()));
 
     /// 오버레이 출력 상태에서 다른 셀 마우스 클릭시, 오버레이 사라지게 하는 역할.
-    cellFocus.addListener(_onChangedFocus);
+    // cellFocus.addListener(_onChangedFocus);
 
     _updateOverlay();
   }
@@ -472,23 +484,25 @@ mixin AutoCompleteTextCellState<T extends AutoCompleteTextCell> on State<T> impl
     _updateOverlay();
   }
 
-  Future<void> _onChangedField (String value) async {
+  Future<void> _onChangedField(String value) async {
     /// Pluto Lib 의 _handleOnChanged 내용
     _cellEditingStatus = formattedValue != value.toString()
         ? _CellEditingStatus.changed
         : _initialCellValue.toString() == value.toString()
-        ? _CellEditingStatus.init
-        : _CellEditingStatus.updated;
+            ? _CellEditingStatus.init
+            : _CellEditingStatus.updated;
 
     /// Autocomplete 위젯의 _onChangedField 내용
     final TextEditingValue textEditValue = textController.value;
-    final Iterable<String> options = await _buildAutoCompleteListItems(textEditValue);
+    final Iterable<String> options =
+        await _buildAutoCompleteListItems(textEditValue);
 
     _options = options;
     _updateHighlight(_highlightedOptionIndex.value);
 
-    if (_selection != null
-        && textEditValue.text != _buildDisplayStringForAutoCompleteListItem(_selection!)) {
+    if (_selection != null &&
+        textEditValue.text !=
+            _buildDisplayStringForAutoCompleteListItem(_selection!)) {
       _selection = null;
     }
 
@@ -502,11 +516,13 @@ mixin AutoCompleteTextCellState<T extends AutoCompleteTextCell> on State<T> impl
   }
 
   void _updateHighlight(int newIndex) {
-    _highlightedOptionIndex.value = _options.isEmpty ? 0 : newIndex % _options.length;
+    _highlightedOptionIndex.value =
+        _options.isEmpty ? 0 : newIndex % _options.length;
   }
 
   void _updateOverlay() {
-    if (SchedulerBinding.instance.schedulerPhase == SchedulerPhase.persistentCallbacks) {
+    if (SchedulerBinding.instance.schedulerPhase ==
+        SchedulerPhase.persistentCallbacks) {
       if (!_floatingOptionsUpdateScheduled) {
         _floatingOptionsUpdateScheduled = true;
         SchedulerBinding.instance.addPostFrameCallback((Duration timeStamp) {
@@ -522,18 +538,15 @@ mixin AutoCompleteTextCellState<T extends AutoCompleteTextCell> on State<T> impl
       final OverlayEntry newFloatingOptions = OverlayEntry(
         builder: (BuildContext context) {
           return CompositedTransformFollower(
-            link: _optionsLayerLink,
-            showWhenUnlinked: false,
-            targetAnchor: Alignment.bottomLeft,
-            child: AutocompleteHighlightedOption(
-              highlightIndexNotifier: _highlightedOptionIndex,
-              child: Builder(
-                builder: (context) {
-                  return _buildAutoCompleteListViewBuilder(context, _select, _options);
-                }
-              )
-            )
-          );
+              link: _optionsLayerLink,
+              showWhenUnlinked: false,
+              targetAnchor: Alignment.bottomLeft,
+              child: AutocompleteHighlightedOption(
+                  highlightIndexNotifier: _highlightedOptionIndex,
+                  child: Builder(builder: (context) {
+                    return _buildAutoCompleteListViewBuilder(
+                        context, _select, _options);
+                  })));
         },
       );
       Overlay.of(context, rootOverlay: true)!.insert(newFloatingOptions);
@@ -580,12 +593,19 @@ mixin AutoCompleteTextCellState<T extends AutoCompleteTextCell> on State<T> impl
     });
 
     /// 한 행의 끝에서 다음 행으로 포커스 이동 로직.
-    bool isEndOfOneRow = widget.stateManager.currentCellPosition!.columnIdx! == widget.stateManager.refColumns.length -1;
-    bool isLastRow = widget.stateManager.currentCellPosition!.rowIdx! == widget.stateManager.rows.length - 1;
+    bool isEndOfOneRow = widget.stateManager.currentCellPosition!.columnIdx! ==
+        widget.stateManager.refColumns.length - 1;
+    bool isLastRow = widget.stateManager.currentCellPosition!.rowIdx! ==
+        widget.stateManager.rows.length - 1;
 
-    if(isEndOfOneRow && !isLastRow) {
+    if (isEndOfOneRow && !isLastRow) {
       widget.stateManager.setCurrentCell(
-        widget.stateManager.refRows[widget.stateManager.currentCellPosition!.rowIdx! + 1].cells.values.firstWhere((e) => e.isFirstOfRow == true),
+        widget
+            .stateManager
+            .refRows[widget.stateManager.currentCellPosition!.rowIdx! + 1]
+            .cells
+            .values
+            .firstWhere((e) => e.isFirstOfRow == true),
         widget.stateManager.currentCellPosition!.rowIdx! + 1,
       );
     }
@@ -634,7 +654,8 @@ mixin AutoCompleteTextCellState<T extends AutoCompleteTextCell> on State<T> impl
     }
 
     /// up, down key 시, AutoComplete List item 선택하도록.
-    if (keyManager.isUp) {        /// highlight prev list item
+    if (keyManager.isUp) {
+      /// highlight prev list item
       if (_highlightedOptionIndex.value != 0) {
         if (_userHidOptions) {
           _userHidOptions = false;
@@ -647,7 +668,8 @@ mixin AutoCompleteTextCellState<T extends AutoCompleteTextCell> on State<T> impl
       return KeyEventResult.handled;
     }
 
-    if (keyManager.isDown) {      /// highlight next list item
+    if (keyManager.isDown) {
+      /// highlight next list item
       if (_options.length - 1 != _highlightedOptionIndex.value) {
         if (_userHidOptions) {
           _userHidOptions = false;
@@ -692,7 +714,8 @@ mixin AutoCompleteTextCellState<T extends AutoCompleteTextCell> on State<T> impl
     );
   }
 
-  _buildAutoCompleteTextField(FocusNode autoCompleteFocusNode, TextEditingController controller) {
+  _buildAutoCompleteTextField(
+      FocusNode autoCompleteFocusNode, TextEditingController controller) {
     return CompositedTransformTarget(
       link: _optionsLayerLink,
       child: TextField(
@@ -721,7 +744,8 @@ mixin AutoCompleteTextCellState<T extends AutoCompleteTextCell> on State<T> impl
     );
   }
 
-  FutureOr<Iterable<String>> _buildAutoCompleteListItems(TextEditingValue textEditingValue) {
+  FutureOr<Iterable<String>> _buildAutoCompleteListItems(
+      TextEditingValue textEditingValue) {
     if (textEditingValue.text == '') {
       return const Iterable<String>.empty();
     }
@@ -733,7 +757,8 @@ mixin AutoCompleteTextCellState<T extends AutoCompleteTextCell> on State<T> impl
     return option.toString();
   }
 
-  Widget _buildAutoCompleteListViewBuilder(BuildContext context, AutocompleteOnSelected<String> onSelected, Iterable<String> options) {
+  Widget _buildAutoCompleteListViewBuilder(BuildContext context,
+      AutocompleteOnSelected<String> onSelected, Iterable<String> options) {
     return _AutocompleteOptions<String>(
       displayStringForOption: _buildDisplayStringForAutoCompleteListItem,
       onSelected: onSelected,
@@ -748,7 +773,6 @@ mixin AutoCompleteTextCellState<T extends AutoCompleteTextCell> on State<T> impl
     print('-------- [AutoComplete] selected :: $selection --------');
   }
 }
-
 
 class _AutocompleteOptions<T extends Object> extends StatelessWidget {
   const _AutocompleteOptions({
@@ -795,14 +819,10 @@ class _AutocompleteOptions<T extends Object> extends StatelessWidget {
         elevation: 4.0,
         child: Container(
           constraints: BoxConstraints(
-            maxWidth: maxOptionsWidth,
-            maxHeight: maxOptionsHeight
-          ),
+              maxWidth: maxOptionsWidth, maxHeight: maxOptionsHeight),
           decoration: BoxDecoration(
             color: Colors.white,
-            border: Border.all(
-              color: appColorGreyBorder,
-              width: 1),
+            border: Border.all(color: appColorGreyBorder, width: 1),
             borderRadius: BorderRadius.circular(10),
             boxShadow: [
               BoxShadow(
@@ -837,15 +857,13 @@ class _AutocompleteOptions<T extends Object> extends StatelessWidget {
                     color: highlight ? appColorPrimary20 : null,
                     height: itemHeight,
                     child: Center(
-                        child: Text(
-                            displayStringForOption(option),
+                        child: Text(displayStringForOption(option),
                             style: highlight
                                 ? itemDefaultTextStyle.copyWith(
-                                fontWeight: FontWeight.w700,
-                                color: appColorPrimary100)
+                                    fontWeight: FontWeight.w700,
+                                    color: appColorPrimary100)
                                 : itemDefaultTextStyle.copyWith(
-                                color: appColorGreyPrimaryText))
-                    ),
+                                    color: appColorGreyPrimaryText))),
                   );
                 }),
               );

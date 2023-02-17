@@ -51,13 +51,15 @@ abstract class PlutoColumnType {
     int? maxLength,
     int? validLength,
     String? validRegExp,
+    bool Function(dynamic value)? customValidation,
   }) {
     return PlutoColumnTypeText(
         defaultValue: defaultValue,
         isOnlyDigits: isOnlyDigits,
         maxLength: maxLength,
         validLength: validLength,
-        validRegExp: validRegExp);
+        validRegExp: validRegExp,
+        customValidation: customValidation);
   }
 
   /// Set to numeric column.
@@ -375,6 +377,7 @@ class PlutoColumnTypeText implements PlutoColumnType {
   final int? maxLength;
   final int? validLength;
   final String? validRegExp;
+  final bool Function(dynamic value)? customValidation;
 
   @override
   final dynamic defaultValue;
@@ -385,6 +388,7 @@ class PlutoColumnTypeText implements PlutoColumnType {
     this.maxLength,
     this.validLength,
     this.validRegExp,
+    this.customValidation,
   });
 
   @override
@@ -395,6 +399,8 @@ class PlutoColumnTypeText implements PlutoColumnType {
     } else if (validRegExp != null) {
       return (value is String || value is num) &&
           (RegExp(validRegExp!).hasMatch(value.toString()));
+    } else if (customValidation != null) {
+      return customValidation!(value);
     } else {
       return (value is String || value is num) && value.toString().isNotEmpty;
     }

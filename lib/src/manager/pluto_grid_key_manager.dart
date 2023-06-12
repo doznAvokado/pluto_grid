@@ -74,9 +74,6 @@ class PlutoGridKeyManager {
   }
 
   void _handler(PlutoKeyManagerEvent keyEvent) {
-    stateManager.keyPressed.shift = keyEvent.isShiftPressed;
-    stateManager.keyPressed.ctrl = keyEvent.isCtrlPressed;
-
     if (keyEvent.isKeyUpEvent) return;
 
     if (stateManager.configuration.shortcut.handle(
@@ -111,30 +108,34 @@ class PlutoGridKeyManager {
         if (stateManager.textEditingController != null) {
           if (stateManager.currentCell!.column.type.isText) {
             if (stateManager.currentCell!.column.type.text.isOnlyDigits) {
-              if (RegExp(onlyNumberRegExp).hasMatch(keyEvent.event.character.toString())) {
-                stateManager.textEditingController!.text = keyEvent.event.character!;
+              if (RegExp(onlyNumberRegExp)
+                  .hasMatch(keyEvent.event.character.toString())) {
+                stateManager.textEditingController!.text =
+                    keyEvent.event.character!;
               } else {
                 stateManager.textEditingController!.text = '';
               }
             } else {
               stateManager.textEditingController!.text =
-              keyEvent.event.character!;
+                  keyEvent.event.character!;
             }
           } else if (stateManager.currentCell!.column.type.isAutoComplete) {
-            if (stateManager.currentCell!.column.type.autoComplete.isOnlyDigits) {
-              if (RegExp(onlyNumberRegExp).hasMatch(keyEvent.event.character.toString())) {
+            if (stateManager
+                .currentCell!.column.type.autoComplete.isOnlyDigits) {
+              if (RegExp(onlyNumberRegExp)
+                  .hasMatch(keyEvent.event.character.toString())) {
                 stateManager.textEditingController!.text =
-                keyEvent.event.character!;
+                    keyEvent.event.character!;
               } else {
                 stateManager.textEditingController!.text = '';
               }
             } else {
               stateManager.textEditingController!.text =
-              keyEvent.event.character!;
+                  keyEvent.event.character!;
             }
           } else {
             stateManager.textEditingController!.text =
-            keyEvent.event.character!;
+                keyEvent.event.character!;
           }
         }
       });

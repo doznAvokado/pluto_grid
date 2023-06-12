@@ -1,3 +1,8 @@
+## [6.0.4] - 2023. 3. 7
+
+* Add Scrollbar properties. https://github.com/bosskmk/pluto_grid/issues/743
+* (dozn) pluto_body_rows.dart 만 업데이트 내용 반영 제외됨.
+
 ## [6.0.3] - 2023. 3. 6
 
 * Add locales.(German, French)

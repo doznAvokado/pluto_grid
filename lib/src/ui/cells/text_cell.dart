@@ -154,12 +154,25 @@ mixin TextCellState<T extends TextCell> on State<T> implements TextFieldProps {
     _cellEditingStatus = _CellEditingStatus.updated;
   }
 
+  /// 다이렉트 인풋 edit 시, 텍스트 블록잡히는 문제 해결위해 prevStatus, if 절 추가
   void _handleOnChanged(String value) {
+    final prevStatus = _cellEditingStatus;
+
     _cellEditingStatus = formattedValue != value.toString()
         ? _CellEditingStatus.changed
         : _initialCellValue.toString() == value.toString()
             ? _CellEditingStatus.init
             : _CellEditingStatus.updated;
+
+    if (prevStatus == _CellEditingStatus.init &&
+        _cellEditingStatus == _CellEditingStatus.changed &&
+        _textController.text.length == 1) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _textController.selection = TextSelection.fromPosition(
+          TextPosition(offset: _textController.text.length),
+        );
+      });
+    }
   }
 
   void _handleOnComplete() {
@@ -484,13 +497,26 @@ mixin AutoCompleteTextCellState<T extends AutoCompleteTextCell> on State<T>
     _updateOverlay();
   }
 
+  /// 다이렉트 인풋 edit 시, 텍스트 블록잡히는 문제 해결위해 prevStatus, if 절 추가
   Future<void> _onChangedField(String value) async {
+    final prevStatus = _cellEditingStatus;
+
     /// Pluto Lib 의 _handleOnChanged 내용
     _cellEditingStatus = formattedValue != value.toString()
         ? _CellEditingStatus.changed
         : _initialCellValue.toString() == value.toString()
             ? _CellEditingStatus.init
             : _CellEditingStatus.updated;
+
+    if (prevStatus == _CellEditingStatus.init &&
+        _cellEditingStatus == _CellEditingStatus.changed &&
+        textController.text.length == 1) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        textController.selection = TextSelection.fromPosition(
+          TextPosition(offset: textController.text.length),
+        );
+      });
+    }
 
     /// Autocomplete 위젯의 _onChangedField 내용
     final TextEditingValue textEditValue = textController.value;

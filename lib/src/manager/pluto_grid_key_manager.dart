@@ -95,9 +95,8 @@ class PlutoGridKeyManager {
   }
 
   void _handleCharacter(PlutoKeyManagerEvent keyEvent) {
-    String onlyNumberRegExp = r"^[0-9]$";
-
     if (stateManager.isEditing != true && stateManager.currentCell != null) {
+      String numbersRegExp = r"^[0-9]$";
       stateManager.setEditing(true);
 
       if (keyEvent.event.character == null) {
@@ -106,37 +105,26 @@ class PlutoGridKeyManager {
 
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (stateManager.textEditingController != null) {
-          if (stateManager.currentCell!.column.type.isText) {
-            if (stateManager.currentCell!.column.type.text.isOnlyDigits) {
-              if (RegExp(onlyNumberRegExp)
-                  .hasMatch(keyEvent.event.character.toString())) {
-                stateManager.textEditingController!.text =
-                    keyEvent.event.character!;
-              } else {
-                stateManager.textEditingController!.text = '';
-              }
-            } else {
-              stateManager.textEditingController!.text =
-                  keyEvent.event.character!;
-            }
-          } else if (stateManager.currentCell!.column.type.isAutoComplete) {
-            if (stateManager
-                .currentCell!.column.type.autoComplete.isOnlyDigits) {
-              if (RegExp(onlyNumberRegExp)
-                  .hasMatch(keyEvent.event.character.toString())) {
-                stateManager.textEditingController!.text =
-                    keyEvent.event.character!;
-              } else {
-                stateManager.textEditingController!.text = '';
-              }
-            } else {
-              stateManager.textEditingController!.text =
-                  keyEvent.event.character!;
-            }
-          } else {
-            stateManager.textEditingController!.text =
-                keyEvent.event.character!;
+          String inputCharacter = keyEvent.event.character.toString();
+          bool inputIsDigits = RegExp(numbersRegExp).hasMatch(inputCharacter);
+          PlutoColumnType cellType = stateManager.currentCell!.column.type;
+
+          bool? isOnlyDigitsType = cellType.isText
+              ? cellType.text.isOnlyDigits
+              : cellType.isAutoComplete
+                  ? cellType.autoComplete.isOnlyDigits
+                  : null;
+
+          if (isOnlyDigitsType == null) {
+            stateManager.textEditingController!.text = inputCharacter;
+            return;
           }
+
+          stateManager.textEditingController!.text = isOnlyDigitsType
+              ? inputIsDigits
+                  ? inputCharacter
+                  : ''
+              : inputCharacter;
         }
       });
     }

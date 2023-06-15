@@ -117,7 +117,6 @@ class PlutoGridKeyManager {
 
           if (isOnlyDigitsType == null) {
             stateManager.textEditingController!.text = inputCharacter;
-
             return;
           }
 

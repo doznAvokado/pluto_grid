@@ -276,6 +276,9 @@ class _CellContainerState extends PlutoStateWithChange<_CellContainer> {
                 width: 2,
               ) // 셀 한번누름 & 편집모드 시 스타일
             : Border(
+                bottom: widget.row.separateFromNext
+                    ? separateBottomBorderSide // 구분자 행의 셀 선택 후 드랍다운 셀 눌렀을 시, 하단 border 사라짐 이슈 방지.
+                    : BorderSide.none,
                 right: BorderSide(
                   color: borderColor,
                 ),

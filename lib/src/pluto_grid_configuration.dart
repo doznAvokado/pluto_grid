@@ -215,6 +215,7 @@ class PlutoGridStyleConfig {
     this.borderColor = const Color(0xFFDDE2EB),
     this.activatedBorderColor = Colors.lightBlue,
     this.inactivatedBorderColor = const Color(0xFFC4C7CC),
+    this.separatedBorderColor = Colors.black,
     this.iconSize = 18,
     this.rowHeight = PlutoGridSettings.rowHeight,
     this.columnHeight = PlutoGridSettings.rowHeight,
@@ -271,6 +272,7 @@ class PlutoGridStyleConfig {
     this.borderColor = const Color(0xFF222222),
     this.activatedBorderColor = const Color(0xFFFFFFFF),
     this.inactivatedBorderColor = const Color(0xFF666666),
+    this.separatedBorderColor = Colors.black,
     this.iconSize = 18,
     this.rowHeight = PlutoGridSettings.rowHeight,
     this.columnHeight = PlutoGridSettings.rowHeight,
@@ -384,6 +386,9 @@ class PlutoGridStyleConfig {
 
   /// Border color set when widgets such as [PlutoRow] and [PlutoCell] lose focus.
   final Color inactivatedBorderColor;
+
+  /// 07.17 추가
+  final Color separatedBorderColor;
 
   /// Icon size. (column menu, cell of popup type)
   final double iconSize;

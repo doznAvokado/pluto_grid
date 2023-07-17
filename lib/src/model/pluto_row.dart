@@ -8,12 +8,14 @@ class PlutoRow {
     this.sortIdx = 0,
     bool checked = false,
     bool isNew = false,
+    bool separateFromNext = false,
     Key? key,
   })  : type = type ?? PlutoRowTypeNormal.instance,
         _checked = checked,
         _state = PlutoRowState.none,
         _key = key ?? UniqueKey(),
-        _isNew = isNew;
+        _isNew = isNew,
+        _separateFromNext = separateFromNext;
 
   final PlutoRowType type;
 
@@ -32,6 +34,12 @@ class PlutoRow {
   bool get isNew => _isNew ??= false;
 
   set isNew(bool value) => _isNew = value;
+
+  bool? _separateFromNext;
+
+  bool get separateFromNext => _separateFromNext ??= false;
+
+  set separateFromNext(bool value) => _separateFromNext = value;
 
   PlutoRow? _parent;
 

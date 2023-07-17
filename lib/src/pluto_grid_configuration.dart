@@ -215,7 +215,7 @@ class PlutoGridStyleConfig {
     this.borderColor = const Color(0xFFDDE2EB),
     this.activatedBorderColor = Colors.lightBlue,
     this.inactivatedBorderColor = const Color(0xFFC4C7CC),
-    this.separatedBorderColor = Colors.black,
+    this.separateBottomBorderSide = BorderSide.none,
     this.iconSize = 18,
     this.rowHeight = PlutoGridSettings.rowHeight,
     this.columnHeight = PlutoGridSettings.rowHeight,
@@ -272,7 +272,7 @@ class PlutoGridStyleConfig {
     this.borderColor = const Color(0xFF222222),
     this.activatedBorderColor = const Color(0xFFFFFFFF),
     this.inactivatedBorderColor = const Color(0xFF666666),
-    this.separatedBorderColor = Colors.black,
+    this.separateBottomBorderSide = BorderSide.none,
     this.iconSize = 18,
     this.rowHeight = PlutoGridSettings.rowHeight,
     this.columnHeight = PlutoGridSettings.rowHeight,
@@ -388,7 +388,7 @@ class PlutoGridStyleConfig {
   final Color inactivatedBorderColor;
 
   /// 07.17 추가
-  final Color separatedBorderColor;
+  final BorderSide separateBottomBorderSide;
 
   /// Icon size. (column menu, cell of popup type)
   final double iconSize;

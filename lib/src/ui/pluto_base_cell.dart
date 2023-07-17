@@ -206,7 +206,7 @@ class _CellContainerState extends PlutoStateWithChange<_CellContainer> {
         cellColorInEditState: style.cellColorInEditState,
         cellColorInReadOnlyState: style.cellColorInReadOnlyState,
         cellColorGroupedRow: style.cellColorGroupedRow,
-        separatedBorderColor: style.separatedBorderColor,
+        separateBottomBorderSide: style.separateBottomBorderSide,
         selectingMode: stateManager.selectingMode,
       ),
     );
@@ -251,7 +251,7 @@ class _CellContainerState extends PlutoStateWithChange<_CellContainer> {
     required Color cellColorInEditState,
     required Color cellColorInReadOnlyState,
     required Color? cellColorGroupedRow,
-    required Color separatedBorderColor,
+    required BorderSide separateBottomBorderSide,
     required PlutoGridSelectingMode selectingMode,
   }) {
     /// 0816 dwk edited. renderer 에서 validation, coloring.
@@ -296,10 +296,7 @@ class _CellContainerState extends PlutoStateWithChange<_CellContainer> {
         border: enableCellVerticalBorder
             ? BorderDirectional(
                 bottom: widget.row.separateFromNext
-                    ? BorderSide(
-                        color: separatedBorderColor,
-                        width: 1,
-                      ) // 행과 행 구분 설정 되어있을 때
+                    ? separateBottomBorderSide // 행과 행 구분 설정 되어있을 때
                     : BorderSide.none,
                 end: BorderSide(
                   color: borderColor,

@@ -69,32 +69,67 @@ class PlutoBodyRowsState extends PlutoStateWithChange<PlutoBodyRows> {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      controller: _horizontalScroll,
-      scrollDirection: Axis.horizontal,
-      physics: const NeverScrollableScrollPhysics(),
-      child: CustomSingleChildLayout(
-        delegate: ListResizeDelegate(stateManager, _columns),
-        child: ListView.builder(
-          controller: _verticalScroll,
-          scrollDirection: Axis.vertical,
-          physics: const ClampingScrollPhysics(),
-          itemCount: _rows.length,
-          itemExtent: stateManager.rowTotalHeight,
-          addRepaintBoundaries: false,
-          itemBuilder: (ctx, i) {
-            return PlutoBaseRow(
-              key: ValueKey('body_row_${_rows[i].key}'),
-              rowIdx: i,
-              row: _rows[i],
-              columns: _columns,
-              stateManager: stateManager,
-              visibilityLayout: true,
-            );
-          },
+    return LayoutBuilder(
+      builder: (context, constraints) => SizedBox(
+        height: constraints.maxHeight,
+        child: SingleChildScrollView(
+          controller: _horizontalScroll,
+          scrollDirection: Axis.horizontal,
+          physics: const NeverScrollableScrollPhysics(),
+          child: CustomSingleChildLayout(
+            delegate: ListResizeDelegate(stateManager, _columns),
+            child: Scrollbar(
+              controller: _verticalScroll,
+              child: ListView.builder(
+                controller: _verticalScroll,
+                scrollDirection: Axis.vertical,
+                physics: const ClampingScrollPhysics(),
+                itemCount: _rows.length,
+                itemExtent: stateManager.rowTotalHeight,
+                addRepaintBoundaries: false,
+                itemBuilder: (ctx, i) {
+                  return PlutoBaseRow(
+                    key: ValueKey('body_row_${_rows[i].key}'),
+                    rowIdx: i,
+                    row: _rows[i],
+                    columns: _columns,
+                    stateManager: stateManager,
+                    visibilityLayout: true,
+                  );
+                },
+              ),
+            ),
+          ),
         ),
       ),
     );
+
+    // return SingleChildScrollView(
+    //   controller: _horizontalScroll,
+    //   scrollDirection: Axis.horizontal,
+    //   physics: const NeverScrollableScrollPhysics(),
+    //   child: CustomSingleChildLayout(
+    //     delegate: ListResizeDelegate(stateManager, _columns),
+    //     child: ListView.builder(
+    //       controller: _verticalScroll,
+    //       scrollDirection: Axis.vertical,
+    //       physics: const ClampingScrollPhysics(),
+    //       itemCount: _rows.length,
+    //       itemExtent: stateManager.rowTotalHeight,
+    //       addRepaintBoundaries: false,
+    //       itemBuilder: (ctx, i) {
+    //         return PlutoBaseRow(
+    //           key: ValueKey('body_row_${_rows[i].key}'),
+    //           rowIdx: i,
+    //           row: _rows[i],
+    //           columns: _columns,
+    //           stateManager: stateManager,
+    //           visibilityLayout: true,
+    //         );
+    //       },
+    //     ),
+    //   ),
+    // );
   }
 }
 

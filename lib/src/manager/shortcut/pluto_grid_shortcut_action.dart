@@ -88,13 +88,15 @@ class PlutoGridActionMoveCellFocus extends PlutoGridShortcutAction {
       return;
     }
 
-    /// 셀 포커스 상태에서의 좌우 포커스이동 기본동작 커스터마이징.
+    /// 0721 dwk. 셀 포커스 상태에서의 좌우 포커스 이동시, 행 끝에서 이전,다음 행이동 로직
     if (direction == PlutoMoveDirection.left) {
       bool isFirstRow = stateManager.currentCellPosition!.rowIdx! == 0;
       bool isStartOfOneRow = stateManager.currentCellPosition!.columnIdx == 0;
       if (isStartOfOneRow && !isFirstRow) {
         stateManager.setCurrentCell(
-          stateManager.refRows[stateManager.currentCellPosition!.rowIdx! - 1].cells.values.firstWhere((e) => e.isLastOfRow == true),
+          stateManager.refRows[stateManager.currentCellPosition!.rowIdx! - 1]
+              .cells.values
+              .firstWhere((e) => e.isLastOfRow == true),
           stateManager.currentCellPosition!.rowIdx! - 1,
         );
         return;
@@ -102,11 +104,15 @@ class PlutoGridActionMoveCellFocus extends PlutoGridShortcutAction {
     }
 
     if (direction == PlutoMoveDirection.right) {
-      bool isLastRow = stateManager.currentCellPosition!.rowIdx! == stateManager.rows.length - 1;
-      bool isEndOfOneRow = stateManager.currentCellPosition!.columnIdx! == stateManager.refColumns.length - 1;
+      bool isLastRow = stateManager.currentCellPosition!.rowIdx! ==
+          stateManager.rows.length - 1;
+      bool isEndOfOneRow = stateManager.currentCellPosition!.columnIdx! ==
+          stateManager.refColumns.length - 1;
       if (isEndOfOneRow && !isLastRow) {
         stateManager.setCurrentCell(
-          stateManager.refRows[stateManager.currentCellPosition!.rowIdx! + 1].cells.values.firstWhere((e) => e.isFirstOfRow == true),
+          stateManager.refRows[stateManager.currentCellPosition!.rowIdx! + 1]
+              .cells.values
+              .firstWhere((e) => e.isFirstOfRow == true),
           stateManager.currentCellPosition!.rowIdx! + 1,
         );
         return;
@@ -445,12 +451,26 @@ class PlutoGridActionDefaultEnterKey extends PlutoGridShortcutAction {
         );
       }
     } else if (enterKeyAction.isEditingAndMoveRight) {
-      /// shift 키와 enter 키 동일동작 하도록 변경됨.
-      stateManager.moveCurrentCell(
-        PlutoMoveDirection.right,
-        force: true,
-        notify: false,
-      );
+      /// 0816 dwk edited below.
+      // /// shift 키와 enter 키 동일동작 하도록 변경됨.
+      // stateManager.moveCurrentCell(
+      //   PlutoMoveDirection.right,
+      //   force: true,
+      //   notify: false,
+      // );
+      if (keyEvent.event.isShiftPressed) {
+        stateManager.moveCurrentCell(
+          PlutoMoveDirection.left,
+          force: true,
+          notify: false,
+        );
+      } else {
+        stateManager.moveCurrentCell(
+          PlutoMoveDirection.right,
+          force: true,
+          notify: false,
+        );
+      }
     }
   }
 }

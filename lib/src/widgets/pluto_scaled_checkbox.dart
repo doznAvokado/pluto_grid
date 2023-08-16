@@ -158,13 +158,20 @@ class _CustomCheckbox extends StatelessWidget {
       );
     }
 
+    /// 0816 dwk added.
+    if (customCheckboxIcon == null) {
+      return const SizedBox.shrink();
+    }
+
     return InkWell(
       onTap: () => onChanged!(!isChecked!),
-      child: Row(       /// Cell Selecting 영역 셀 전체로 확장
-        mainAxisAlignment: MainAxisAlignment.center,
+      child: Row(
+        mainAxisAlignment:
+            MainAxisAlignment.center, // Cell Selecting 영역 셀 전체로 확장
         children: [
-          Column(       /// Cell Selecting 영역 셀 전체로 확장
-            mainAxisAlignment: MainAxisAlignment.center,
+          Column(
+            mainAxisAlignment:
+                MainAxisAlignment.center, // Cell Selecting 영역 셀 전체로 확장
             children: [
               Container(
                 width: containerWidth,
@@ -184,9 +191,7 @@ class _CustomCheckbox extends StatelessWidget {
                         ),
                 ),
                 alignment: Alignment.center,
-                child: isChecked!
-                    ? customCheckboxIcon
-                    : null,
+                child: isChecked! ? customCheckboxIcon : null,
               ),
             ],
           ),
@@ -195,5 +200,3 @@ class _CustomCheckbox extends StatelessWidget {
     );
   }
 }
-
-

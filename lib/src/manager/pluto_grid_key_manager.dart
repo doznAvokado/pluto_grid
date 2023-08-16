@@ -96,17 +96,16 @@ class PlutoGridKeyManager {
 
   void _handleCharacter(PlutoKeyManagerEvent keyEvent) {
     if (stateManager.isEditing != true && stateManager.currentCell != null) {
-      String numbersRegExp = r"^[0-9]$";
       stateManager.setEditing(true);
 
       if (keyEvent.event.character == null) {
         return;
       }
 
+      /// 0724 dwk added. (isOnlyDigits 인 경우, 한글, 특수문자 최초 다이렉트 인풋 방지)
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (stateManager.textEditingController != null) {
           String inputCharacter = keyEvent.event.character.toString();
-          bool inputIsDigits = RegExp(numbersRegExp).hasMatch(inputCharacter);
           PlutoColumnType cellType = stateManager.currentCell!.column.type;
 
           bool? isOnlyDigitsType = cellType.isText
@@ -115,16 +114,19 @@ class PlutoGridKeyManager {
                   ? cellType.autoComplete.isOnlyDigits
                   : null;
 
-          if (isOnlyDigitsType == null) {
-            stateManager.textEditingController!.text = inputCharacter;
+          if (isOnlyDigitsType != null) {
+            String numbersRegExp = r"^[0-9]$";
+
+            stateManager.textEditingController!.text = isOnlyDigitsType
+                ? RegExp(numbersRegExp).hasMatch(inputCharacter)
+                    ? inputCharacter
+                    : ''
+                : inputCharacter;
+
             return;
           }
 
-          stateManager.textEditingController!.text = isOnlyDigitsType
-              ? inputIsDigits
-                  ? inputCharacter
-                  : ''
-              : inputCharacter;
+          stateManager.textEditingController!.text = inputCharacter;
         }
       });
     }

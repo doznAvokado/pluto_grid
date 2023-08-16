@@ -1,20 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart' as intl;
 
 abstract class PlutoColumnType {
   dynamic get defaultValue;
 
+  /// 0816 dwk inputFormatters added.
   factory PlutoColumnType.autoComplete({
     dynamic defaultValue,
     bool isOnlyDigits = false,
     int? maxLength,
     List<String> items = const [],
+    List<TextInputFormatter>? inputFormatters,
     double listHeight = 36 * 5,
     double itemHeight = 36,
   }) {
     return PlutoColumnTypeAutoComplete(
       defaultValue: defaultValue,
       isOnlyDigits: isOnlyDigits,
+      inputFormatters: inputFormatters,
       maxLength: maxLength,
       items: items,
       listHeight: listHeight,
@@ -30,7 +34,7 @@ abstract class PlutoColumnType {
     bool enableColumnFilter = false,
     IconData? popupIcon,
     Widget? focusedIcon,
-    Widget? defaulticon,
+    Widget? defaultIcon,
   }) {
     return PlutoColumnTypeDropDown(
       defaultValue: defaultValue,
@@ -40,7 +44,7 @@ abstract class PlutoColumnType {
       enableColumnFilter: enableColumnFilter,
       popupIcon: popupIcon,
       focusedIcon: focusedIcon,
-      defaulticon: defaulticon,
+      defaultIcon: defaultIcon,
     );
   }
 
@@ -49,17 +53,18 @@ abstract class PlutoColumnType {
     dynamic defaultValue = '',
     bool isOnlyDigits = false,
     int? maxLength,
-    int? validLength,
     String? validRegExp,
     bool Function(dynamic value)? customValidation,
+    List<TextInputFormatter>? inputFormatters,
   }) {
     return PlutoColumnTypeText(
-        defaultValue: defaultValue,
-        isOnlyDigits: isOnlyDigits,
-        maxLength: maxLength,
-        validLength: validLength,
-        validRegExp: validRegExp,
-        customValidation: customValidation);
+      defaultValue: defaultValue,
+      isOnlyDigits: isOnlyDigits,
+      maxLength: maxLength,
+      validRegExp: validRegExp,
+      customValidation: customValidation,
+      inputFormatters: inputFormatters,
+    );
   }
 
   /// Set to numeric column.
@@ -305,6 +310,7 @@ class PlutoColumnTypeAutoComplete implements PlutoColumnType {
   final dynamic defaultValue;
   final bool isOnlyDigits;
   final int? maxLength;
+  List<TextInputFormatter>? inputFormatters;
   List<String> items;
   final double listHeight;
   final double itemHeight;
@@ -313,6 +319,7 @@ class PlutoColumnTypeAutoComplete implements PlutoColumnType {
     this.defaultValue,
     required this.items,
     required this.isOnlyDigits,
+    this.inputFormatters,
     this.maxLength,
     this.listHeight = 36 * 5,
     this.itemHeight = 36,
@@ -345,7 +352,7 @@ class PlutoColumnTypeDropDown
   final IconData? popupIcon;
 
   final Widget? focusedIcon;
-  final Widget? defaulticon;
+  final Widget? defaultIcon;
 
   PlutoColumnTypeDropDown({
     this.defaultValue,
@@ -355,11 +362,11 @@ class PlutoColumnTypeDropDown
     required this.enableColumnFilter,
     this.popupIcon,
     this.focusedIcon,
-    this.defaulticon,
+    this.defaultIcon,
   });
 
   @override
-  bool isValid(dynamic value) => items?.contains(value) == true;
+  bool isValid(dynamic value) => items.contains(value) == true;
 
   @override
   int compare(dynamic a, dynamic b) {
@@ -375,9 +382,9 @@ class PlutoColumnTypeDropDown
 class PlutoColumnTypeText implements PlutoColumnType {
   final bool isOnlyDigits;
   final int? maxLength;
-  final int? validLength;
   final String? validRegExp;
   final bool Function(dynamic value)? customValidation;
+  final List<TextInputFormatter>? inputFormatters;
 
   @override
   final dynamic defaultValue;
@@ -386,24 +393,35 @@ class PlutoColumnTypeText implements PlutoColumnType {
     this.defaultValue,
     this.isOnlyDigits = false,
     this.maxLength,
-    this.validLength,
     this.validRegExp,
     this.customValidation,
+    this.inputFormatters,
   });
 
   @override
   bool isValid(dynamic value) {
-    if (validLength != null) {
-      return (value is String || value is num) &&
-          (value.toString().length == validLength);
-    } else if (validRegExp != null) {
-      return (value is String || value is num) &&
-          (RegExp(validRegExp!).hasMatch(value.toString()));
+    /// 0816 dwk edited.
+    final baseCondition = (value is String || value is num);
+
+    if (validRegExp != null) {
+      return baseCondition && (RegExp(validRegExp!).hasMatch(value.toString()));
     } else if (customValidation != null) {
       return customValidation!(value);
     } else {
-      return (value is String || value is num) && value.toString().isNotEmpty;
+      return baseCondition && value.toString().isNotEmpty;
     }
+
+    // if (validLength != null) {
+    //   return (value is String || value is num) &&
+    //       (value.toString().length == validLength);
+    // } else if (validRegExp != null) {
+    //   return (value is String || value is num) &&
+    //       (RegExp(validRegExp!).hasMatch(value.toString()));
+    // } else if (customValidation != null) {
+    //   return customValidation!(value);
+    // } else {
+    //   return (value is String || value is num) && value.toString().isNotEmpty;
+    // }
   }
 
   @override

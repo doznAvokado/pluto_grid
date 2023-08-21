@@ -182,6 +182,13 @@ class _CellContainerState extends PlutoStateWithChange<_CellContainer> {
     final style = stateManager.style;
 
     final isCurrentCell = stateManager.isCurrentCell(widget.cell);
+    final isCheckboxCell =
+        stateManager.currentCell?.column.enableRowChecked == true;
+
+    final currentRowIndex = stateManager.currentRowIdx ?? 0;
+    final prevRowIsSeparation = currentRowIndex != 0
+        ? stateManager.rows[currentRowIndex - 1].separateFromNext
+        : false;
 
     _decoration = update(
       _decoration,
@@ -202,12 +209,15 @@ class _CellContainerState extends PlutoStateWithChange<_CellContainer> {
         activatedBorderColor: style.activatedBorderColor,
         activatedColor: style.activatedColor,
         inactivatedBorderColor: style.inactivatedBorderColor,
+        wrongCellColor: style.wrongCellColor,
         gridBackgroundColor: style.gridBackgroundColor,
         cellColorInEditState: style.cellColorInEditState,
         cellColorInReadOnlyState: style.cellColorInReadOnlyState,
         cellColorGroupedRow: style.cellColorGroupedRow,
         separateBottomBorderSide: style.separateBottomBorderSide,
         selectingMode: stateManager.selectingMode,
+        isCheckboxCell: isCheckboxCell,
+        borderingTopNormally: currentRowIndex == 0 || !prevRowIsSeparation,
       ),
     );
   }
@@ -247,15 +257,39 @@ class _CellContainerState extends PlutoStateWithChange<_CellContainer> {
     required Color activatedBorderColor,
     required Color activatedColor,
     required Color inactivatedBorderColor,
+    required Color wrongCellColor,
     required Color gridBackgroundColor,
     required Color cellColorInEditState,
     required Color cellColorInReadOnlyState,
     required Color? cellColorGroupedRow,
     required BorderSide separateBottomBorderSide,
     required PlutoGridSelectingMode selectingMode,
+    required bool isCheckboxCell,
+    required bool borderingTopNormally,
   }) {
-    /// 0816 dwk edited. renderer 에서 validation, coloring.
-    // final isValid = widget.column.type.isValid(widget.cell.value);
+    /// 0819 dwk edited. 체크박스 & 명부 다이얼로그로 추가할 때, 초기 행은 valid 체크 no.
+    final isValid =
+        isCheckboxCell || widget.cell.skipValidation || widget.row.isNew
+            ? true
+            : widget.column.type.isValid(widget.cell.value);
+
+    /// 0819 readOnly 일때, 셀 선택 효과 없애기 위함. readOnly에서 스크롤 되게끔 하고자 함.
+    if (widget.stateManager.mode == PlutoGridMode.readOnly) {
+      return BoxDecoration(
+        color: isGroupedRowCell ? cellColorGroupedRow : null,
+        border: enableCellVerticalBorder
+            ? BorderDirectional(
+                bottom: widget.row.separateFromNext
+                    ? separateBottomBorderSide // 행과 행 구분 설정 되어있을 때
+                    : BorderSide.none,
+                end: BorderSide(
+                  color: borderColor,
+                  width: 1.0,
+                ),
+              )
+            : null,
+      );
+    }
 
     if (isCurrentCell) {
       /// 현재 한번 선택한 셀 Border
@@ -271,9 +305,26 @@ class _CellContainerState extends PlutoStateWithChange<_CellContainer> {
           selectingMode: selectingMode,
         ),
         border: hasFocus
-            ? Border.all(
-                color: activatedBorderColor,
-                width: 2,
+            ? Border(
+                top: BorderSide(
+                  color: isValid ? activatedBorderColor : wrongCellColor,
+                  width: borderingTopNormally ? 2 : 2.3,
+                  strokeAlign: borderingTopNormally
+                      ? BorderSide.strokeAlignInside
+                      : BorderSide.strokeAlignOutside,
+                ),
+                left: BorderSide(
+                  color: isValid ? activatedBorderColor : wrongCellColor,
+                  width: 2,
+                ),
+                right: BorderSide(
+                  color: isValid ? activatedBorderColor : wrongCellColor,
+                  width: 2,
+                ),
+                bottom: BorderSide(
+                  color: isValid ? activatedBorderColor : wrongCellColor,
+                  width: 2,
+                ),
               ) // 셀 한번누름 & 편집모드 시 스타일
             : Border(
                 bottom: widget.row.separateFromNext

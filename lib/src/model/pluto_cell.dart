@@ -7,18 +7,22 @@ class PlutoCell {
     bool isFirstOfRow = false,
     bool isLastOfRow = false,
     bool isNewCell = false,
+    bool skipValidation = false,
     Key? key,
   })  : _key = key ?? UniqueKey(),
         _value = value,
         _isFirstOfRow = isFirstOfRow,
         _isLastOfRow = isLastOfRow,
-        _isNewCell = isNewCell;
+        _isNewCell = isNewCell,
+        _skipValidation = skipValidation;
 
   final bool _isFirstOfRow;
 
   final bool _isLastOfRow;
 
   bool _isNewCell = false;
+
+  bool _skipValidation = false;
 
   bool _hasError = false;
 
@@ -49,6 +53,10 @@ class PlutoCell {
   bool get isNewCell => _isNewCell;
 
   set isNewCell(bool isNew) => _isNewCell = isNew;
+
+  bool get skipValidation => _skipValidation;
+
+  set skipValidation(bool skip) => _skipValidation = skip;
 
   bool get hasError => _hasError;
 

@@ -83,10 +83,11 @@ class PlutoGridShortcut {
     LogicalKeySet(LogicalKeyboardKey.enter):
         const PlutoGridActionDefaultEnterKey(),
 
-    /// shift 키 enter 와 동일동작 처리.
-    /// but, non-editable cell 에서는 횡방향 이동 수행. editable cell 에서는 선택 모드 -> 편집 모드 진입만 수행.
-    LogicalKeySet(LogicalKeyboardKey.shift):
-        const PlutoGridActionDefaultEnterKey(),
+    /// 0816 dwk disables below
+    // /// shift 키 enter 와 동일동작 처리.
+    // /// but, non-editable cell 에서는 횡방향 이동 수행. editable cell 에서는 선택 모드 -> 편집 모드 진입만 수행.
+    // LogicalKeySet(LogicalKeyboardKey.shift):
+    //     const PlutoGridActionDefaultEnterKey(),
 
     LogicalKeySet(LogicalKeyboardKey.numpadEnter):
         const PlutoGridActionDefaultEnterKey(),

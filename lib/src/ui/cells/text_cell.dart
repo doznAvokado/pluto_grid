@@ -42,11 +42,21 @@ mixin TextCellState<T extends TextCell> on State<T> implements TextFieldProps {
 
   late _CellEditingStatus _cellEditingStatus;
 
+  /// 0816 dwk edited.
+  // @override
+  // TextInputType get keyboardType => TextInputType.text;
   @override
-  TextInputType get keyboardType => TextInputType.text;
+  TextInputType get keyboardType =>
+      widget.column.type.isText && widget.column.type.text.isOnlyDigits
+          ? TextInputType.number
+          : TextInputType.text;
 
+  /// 0816 dwk edited.
+  // @override
+  // List<TextInputFormatter>? get inputFormatters => [];
   @override
-  List<TextInputFormatter>? get inputFormatters => [];
+  List<TextInputFormatter>? get inputFormatters =>
+      widget.column.type.isText ? widget.column.type.text.inputFormatters : [];
 
   String get formattedValue =>
       widget.column.formattedValueForDisplayInEditing(widget.cell.value);
@@ -276,7 +286,6 @@ mixin TextCellState<T extends TextCell> on State<T> implements TextFieldProps {
       readOnly: widget.column.checkReadOnly(widget.row, widget.cell),
       onChanged: _handleOnChanged,
       onEditingComplete: _handleOnComplete,
-      maxLength: widget.column.type.text.maxLength,
       onSubmitted: (_) => _handleOnComplete(),
       onTap: _handleOnTap,
       style: widget.stateManager.configuration.style.cellTextStyle,
@@ -285,9 +294,17 @@ mixin TextCellState<T extends TextCell> on State<T> implements TextFieldProps {
         border: OutlineInputBorder(
           borderSide: BorderSide.none,
         ),
+        enabledBorder: OutlineInputBorder(
+          borderSide: BorderSide.none,
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderSide: BorderSide.none,
+        ),
         contentPadding: EdgeInsets.zero,
       ),
       maxLines: 1,
+      maxLength:
+          widget.column.type.isText ? widget.column.type.text.maxLength : null,
       keyboardType: keyboardType,
       inputFormatters: inputFormatters,
       textAlignVertical: TextAlignVertical.center,
@@ -346,11 +363,36 @@ mixin AutoCompleteTextCellState<T extends AutoCompleteTextCell> on State<T>
   late final FocusNode cellFocus;
   late _CellEditingStatus _cellEditingStatus;
 
-  @override
-  TextInputType get keyboardType => TextInputType.text;
+  /// 0816 dwk added. should open upside check
+  late Size screenSize = MediaQuery.of(context).size;
+  final autoCompleteCellKey = GlobalKey();
+  late RenderBox autoCompleteCellRenderBox =
+      autoCompleteCellKey.currentContext!.findRenderObject() as RenderBox;
+  late Offset autoCompleteCellPosition = Offset(
+    autoCompleteCellRenderBox.localToGlobal(Offset.zero).dx,
+    autoCompleteCellRenderBox.localToGlobal(Offset.zero).dy,
+  );
+  late Size autoCompleteCellSize = autoCompleteCellRenderBox.size;
 
+  late bool isUpside = screenSize.height / 2 <= autoCompleteCellPosition.dy;
+
+  /// 0816 dwk edited.
+  // @override
+  // TextInputType get keyboardType => TextInputType.text;
   @override
-  List<TextInputFormatter>? get inputFormatters => [];
+  TextInputType get keyboardType => widget.column.type.isAutoComplete &&
+          widget.column.type.autoComplete.isOnlyDigits
+      ? TextInputType.number
+      : TextInputType.text;
+
+  /// 0816 dwk edited.
+  // @override
+  // List<TextInputFormatter>? get inputFormatters => [];
+  @override
+  List<TextInputFormatter>? get inputFormatters =>
+      widget.column.type.isAutoComplete
+          ? widget.column.type.autoComplete.inputFormatters
+          : [];
 
   String get formattedValue =>
       widget.column.formattedValueForDisplayInEditing(widget.cell.value);
@@ -541,6 +583,28 @@ mixin AutoCompleteTextCellState<T extends AutoCompleteTextCell> on State<T>
     _updateOverlay();
   }
 
+  /// 0816 dwk added.
+  _highLightItem({required bool highlightingForward}) {
+    final int currentIndex = _highlightedOptionIndex.value;
+
+    final bool highlightCondition = highlightingForward
+        ? currentIndex != _options.length - 1
+        : currentIndex != 0;
+
+    final int nextHighlightIndex =
+        highlightingForward ? currentIndex + 1 : currentIndex - 1;
+
+    if (highlightCondition) {
+      if (_userHidOptions) {
+        _userHidOptions = false;
+        _updateOverlay();
+        return KeyEventResult.ignored;
+      }
+      _updateHighlight(nextHighlightIndex);
+      return KeyEventResult.handled;
+    }
+  }
+
   void _updateHighlight(int newIndex) {
     _highlightedOptionIndex.value =
         _options.isEmpty ? 0 : newIndex % _options.length;
@@ -563,16 +627,42 @@ mixin AutoCompleteTextCellState<T extends AutoCompleteTextCell> on State<T>
     if (_shouldShowOptions) {
       final OverlayEntry newFloatingOptions = OverlayEntry(
         builder: (BuildContext context) {
-          return CompositedTransformFollower(
+          /// 0816 dwk edited.
+          return Positioned(
+            top: isUpside ? null : autoCompleteCellPosition.dy,
+            bottom: isUpside ? autoCompleteCellPosition.dy : null,
+            left: autoCompleteCellPosition.dx,
+            child: CompositedTransformFollower(
               link: _optionsLayerLink,
               showWhenUnlinked: false,
-              targetAnchor: Alignment.bottomLeft,
+              targetAnchor: isUpside ? Alignment.topLeft : Alignment.bottomLeft,
+              followerAnchor:
+                  isUpside ? Alignment.bottomLeft : Alignment.topLeft,
               child: AutocompleteHighlightedOption(
-                  highlightIndexNotifier: _highlightedOptionIndex,
-                  child: Builder(builder: (context) {
+                highlightIndexNotifier: _highlightedOptionIndex,
+                child: Builder(
+                  builder: (context) {
                     return _buildAutoCompleteListViewBuilder(
-                        context, _select, _options);
-                  })));
+                      context,
+                      _select,
+                      _options,
+                    );
+                  },
+                ),
+              ),
+            ),
+          );
+
+          // return CompositedTransformFollower(
+          //     link: _optionsLayerLink,
+          //     showWhenUnlinked: false,
+          //     targetAnchor: Alignment.bottomLeft,
+          //     child: AutocompleteHighlightedOption(
+          //         highlightIndexNotifier: _highlightedOptionIndex,
+          //         child: Builder(builder: (context) {
+          //           return _buildAutoCompleteListViewBuilder(
+          //               context, _select, _options);
+          //         })));
         },
       );
       Overlay.of(context, rootOverlay: true)!.insert(newFloatingOptions);
@@ -681,30 +771,12 @@ mixin AutoCompleteTextCellState<T extends AutoCompleteTextCell> on State<T>
 
     /// up, down key 시, AutoComplete List item 선택하도록.
     if (keyManager.isUp) {
-      /// highlight prev list item
-      if (_highlightedOptionIndex.value != 0) {
-        if (_userHidOptions) {
-          _userHidOptions = false;
-          _updateOverlay();
-          return KeyEventResult.ignored;
-        }
-        _updateHighlight(_highlightedOptionIndex.value - 1);
-        return KeyEventResult.handled;
-      }
+      _highLightItem(highlightingForward: isUpside);
       return KeyEventResult.handled;
     }
 
     if (keyManager.isDown) {
-      /// highlight next list item
-      if (_options.length - 1 != _highlightedOptionIndex.value) {
-        if (_userHidOptions) {
-          _userHidOptions = false;
-          _updateOverlay();
-          return KeyEventResult.ignored;
-        }
-        _updateHighlight(_highlightedOptionIndex.value + 1);
-        return KeyEventResult.handled;
-      }
+      _highLightItem(highlightingForward: !isUpside);
       return KeyEventResult.handled;
     }
 
@@ -743,6 +815,7 @@ mixin AutoCompleteTextCellState<T extends AutoCompleteTextCell> on State<T>
   _buildAutoCompleteTextField(
       FocusNode autoCompleteFocusNode, TextEditingController controller) {
     return CompositedTransformTarget(
+      key: autoCompleteCellKey,
       link: _optionsLayerLink,
       child: TextField(
         focusNode: autoCompleteFocusNode,
@@ -758,6 +831,12 @@ mixin AutoCompleteTextCellState<T extends AutoCompleteTextCell> on State<T>
         decoration: const InputDecoration(
           counterText: '',
           border: OutlineInputBorder(
+            borderSide: BorderSide.none,
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderSide: BorderSide.none,
+          ),
+          focusedBorder: OutlineInputBorder(
             borderSide: BorderSide.none,
           ),
           contentPadding: EdgeInsets.zero,
@@ -783,20 +862,20 @@ mixin AutoCompleteTextCellState<T extends AutoCompleteTextCell> on State<T>
     return option.toString();
   }
 
-  Widget _buildAutoCompleteListViewBuilder(BuildContext context,
-      AutocompleteOnSelected<String> onSelected, Iterable<String> options) {
+  Widget _buildAutoCompleteListViewBuilder(
+    BuildContext context,
+    AutocompleteOnSelected<String> onSelected,
+    Iterable<String> options,
+  ) {
     return _AutocompleteOptions<String>(
       displayStringForOption: _buildDisplayStringForAutoCompleteListItem,
       onSelected: onSelected,
       options: options,
+      isUpside: isUpside,
       maxOptionsWidth: widget.column.width,
       maxOptionsHeight: widget.column.type.autoComplete.listHeight,
       itemHeight: widget.column.type.autoComplete.itemHeight,
     );
-  }
-
-  _onSelectAutoCompleteListItem(String selection) {
-    print('-------- [AutoComplete] selected :: $selection --------');
   }
 }
 
@@ -806,6 +885,7 @@ class _AutocompleteOptions<T extends Object> extends StatelessWidget {
     required this.displayStringForOption,
     required this.onSelected,
     required this.options,
+    required this.isUpside,
     required this.maxOptionsWidth,
     required this.maxOptionsHeight,
     required this.itemHeight,
@@ -816,6 +896,7 @@ class _AutocompleteOptions<T extends Object> extends StatelessWidget {
   final AutocompleteOnSelected<T> onSelected;
 
   final Iterable<T> options;
+  final bool isUpside;
   final double maxOptionsWidth;
   final double maxOptionsHeight;
   final double itemHeight;
@@ -845,7 +926,9 @@ class _AutocompleteOptions<T extends Object> extends StatelessWidget {
         elevation: 4.0,
         child: Container(
           constraints: BoxConstraints(
-              maxWidth: maxOptionsWidth, maxHeight: maxOptionsHeight),
+            maxWidth: maxOptionsWidth,
+            maxHeight: maxOptionsHeight,
+          ),
           decoration: BoxDecoration(
             color: Colors.white,
             border: Border.all(color: appColorGreyBorder, width: 1),
@@ -861,6 +944,7 @@ class _AutocompleteOptions<T extends Object> extends StatelessWidget {
           child: ListView.builder(
             padding: const EdgeInsets.symmetric(vertical: 10),
             shrinkWrap: true,
+            reverse: isUpside,
             itemCount: options.length,
             itemBuilder: (BuildContext context, int index) {
               final T option = options.elementAt(index);

@@ -116,6 +116,13 @@ class PlutoGridCupertinoScrollbarState extends State<PlutoScrollbar>
   final GlobalKey _customPaintKey = GlobalKey();
   _ScrollbarPainter? _painter;
 
+  /// 0816 dwk edited.
+  late Widget child = CustomPaint(
+    key: _customPaintKey,
+    foregroundPainter: _painter,
+    child: RepaintBoundary(child: widget.child),
+  );
+
   late TextDirection _textDirection;
   late AnimationController _fadeoutAnimationController;
   late Animation<double> _fadeoutOpacityAnimation;
@@ -579,12 +586,6 @@ class PlutoGridCupertinoScrollbarState extends State<PlutoScrollbar>
 
   @override
   Widget build(BuildContext context) {
-    Widget child = CustomPaint(
-      key: _customPaintKey,
-      foregroundPainter: _painter,
-      child: RepaintBoundary(child: widget.child),
-    );
-
     if (widget.enableHover) {
       child = MouseRegion(
         onExit: (PointerExitEvent event) {

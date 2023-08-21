@@ -35,30 +35,31 @@ class PlutoTextCellState extends State<PlutoTextCell>
   @override
   List<TextInputFormatter>? inputFormatters;
 
-  @override
-  late TextInputType keyboardType;
+  /// 0816 dwk disables below.
+  // @override
+  // late TextInputType keyboardType;
 
   @override
   void initState() {
     super.initState();
     final textColumn = widget.column.type.text;
+
     if (textColumn.isOnlyDigits) {
-      inputFormatters = [
-        DecimalTextInputFormatter(
-          decimalRange: 10,
-          activatedNegativeValues: false,
-          allowFirstDot: false,
-          decimalSeparator: "",
-        ),
-      ];
-      keyboardType = TextInputType.number;
-    } else {
-      keyboardType = TextInputType.text;
+      inputFormatters = textColumn.inputFormatters ??
+          [
+            DecimalTextInputFormatter(
+              decimalRange: 10,
+              activatedNegativeValues: false,
+              allowFirstDot: false,
+              decimalSeparator: "",
+            ),
+          ];
     }
   }
 }
 
-class PlutoAutoCompleteTextCell extends StatefulWidget implements AutoCompleteTextCell {
+class PlutoAutoCompleteTextCell extends StatefulWidget
+    implements AutoCompleteTextCell {
   @override
   final PlutoGridStateManager stateManager;
 
@@ -80,32 +81,34 @@ class PlutoAutoCompleteTextCell extends StatefulWidget implements AutoCompleteTe
   }) : super(key: key);
 
   @override
-  State<PlutoAutoCompleteTextCell> createState() => _PlutoAutoCompleteTextCellState();
+  State<PlutoAutoCompleteTextCell> createState() =>
+      _PlutoAutoCompleteTextCellState();
 }
 
-class _PlutoAutoCompleteTextCellState extends State<PlutoAutoCompleteTextCell> with AutoCompleteTextCellState<PlutoAutoCompleteTextCell>{
+class _PlutoAutoCompleteTextCellState extends State<PlutoAutoCompleteTextCell>
+    with AutoCompleteTextCellState<PlutoAutoCompleteTextCell> {
   @override
   List<TextInputFormatter>? inputFormatters;
 
-  @override
-  late TextInputType keyboardType;
+  /// 0816 dwk disables below.
+  // @override
+  // late TextInputType keyboardType;
 
   @override
   void initState() {
     super.initState();
-    final textColumn = widget.column.type.autoComplete;
-    if (textColumn.isOnlyDigits) {
-      inputFormatters = [
-        DecimalTextInputFormatter(
-          decimalRange: 10,
-          activatedNegativeValues: false,
-          allowFirstDot: false,
-          decimalSeparator: "",
-        ),
-      ];
-      keyboardType = TextInputType.number;
-    } else {
-      keyboardType = TextInputType.text;
+    final autoCompleteColumn = widget.column.type.autoComplete;
+
+    if (autoCompleteColumn.isOnlyDigits) {
+      inputFormatters = autoCompleteColumn.inputFormatters ??
+          [
+            DecimalTextInputFormatter(
+              decimalRange: 10,
+              activatedNegativeValues: false,
+              allowFirstDot: false,
+              decimalSeparator: "",
+            ),
+          ];
     }
   }
 }

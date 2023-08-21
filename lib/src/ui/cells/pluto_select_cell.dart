@@ -120,7 +120,8 @@ class _PlutoDropDownCellState extends State<PlutoDropDownCell> {
   final dropdownButtonKey = GlobalKey();
 
   late Size screenSize = MediaQuery.of(context).size;
-  late RenderBox buttonRenderBox = dropdownButtonKey.currentContext!.findRenderObject() as RenderBox;
+  late RenderBox buttonRenderBox =
+      dropdownButtonKey.currentContext!.findRenderObject() as RenderBox;
   late Offset buttonPosition = Offset(
     buttonRenderBox.localToGlobal(Offset.zero).dx,
     buttonRenderBox.localToGlobal(Offset.zero).dy,
@@ -159,11 +160,13 @@ class _PlutoDropDownCellState extends State<PlutoDropDownCell> {
         return KeyEventResult.handled;
       }
       if (keyManager.isLeft) {
-        widget.stateManager.moveCurrentCell(PlutoMoveDirection.left, force: true);
+        widget.stateManager
+            .moveCurrentCell(PlutoMoveDirection.left, force: true);
         return KeyEventResult.handled;
       }
       if (keyManager.isRight) {
-        widget.stateManager.moveCurrentCell(PlutoMoveDirection.right, force: true);
+        widget.stateManager
+            .moveCurrentCell(PlutoMoveDirection.right, force: true);
         return KeyEventResult.handled;
       }
     }
@@ -178,14 +181,14 @@ class _PlutoDropDownCellState extends State<PlutoDropDownCell> {
         context: context,
         barrierColor: Colors.transparent,
         builder: (context) => PlutoDropDownCellList(
-          stateManager: widget.stateManager,
-          offset: buttonPosition,
-          width: buttonSize.width,
-          isUpside: screenSize.height / 2 <= buttonPosition.dy,
-          layerLink: layerLink,
-          items: widget.column.type.dropdown.items,
-          initialValue: widget.cell.value,
-        ));
+              stateManager: widget.stateManager,
+              offset: buttonPosition,
+              width: buttonSize.width,
+              isUpside: screenSize.height / 2 <= buttonPosition.dy,
+              layerLink: layerLink,
+              items: widget.column.type.dropdown.items,
+              initialValue: widget.cell.value,
+            ));
     if (result == null) {
       return;
     }
@@ -193,7 +196,8 @@ class _PlutoDropDownCellState extends State<PlutoDropDownCell> {
     if (widget.cell.value != result) {
       widget.stateManager.changeCellValue(widget.cell, result, notify: false);
     }
-    widget.stateManager.moveCurrentCell(PlutoMoveDirection.right, force: true, notify: false);
+    widget.stateManager
+        .moveCurrentCell(PlutoMoveDirection.right, force: true, notify: false);
     widget.stateManager.setKeepFocus(true, notify: false);
     widget.stateManager.setEditing(true);
   }
@@ -218,13 +222,17 @@ class _PlutoDropDownCellState extends State<PlutoDropDownCell> {
             shape: const RoundedRectangleBorder(),
             elevation: 0,
             backgroundColor: Colors.transparent,
-            foregroundColor: prevFocus ? appColorPrimary20 : appColorGreySecondaryText,
+
+            /// 0816 dwk edited. disables foregroundColor
+            // foregroundColor:
+            //     prevFocus ? appColorPrimary20 : appColorGreySecondaryText,
             side: BorderSide.none,
           ),
           onPressed: () async {
             isChangeFocus = false;
             setState(() {
               prevFocus = true;
+
               /// 누른시점에 size.height, buttonPosition update.
               screenSize = MediaQuery.of(context).size;
               buttonPosition = Offset(
@@ -246,7 +254,9 @@ class _PlutoDropDownCellState extends State<PlutoDropDownCell> {
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w400,
-                    color: prevFocus ? appColorPrimary100 : appColorGreyPrimaryText,
+                    color: prevFocus
+                        ? appColorPrimary100
+                        : appColorGreyPrimaryText,
                     height: 17.5 / 14,
                     letterSpacing: -0.5,
                   ),
@@ -255,7 +265,7 @@ class _PlutoDropDownCellState extends State<PlutoDropDownCell> {
               ),
               prevFocus
                   ? widget.column.type.dropdown.focusedIcon!
-                  : widget.column.type.dropdown.defaulticon!,
+                  : widget.column.type.dropdown.defaultIcon!,
             ],
           ),
         ),
@@ -298,13 +308,16 @@ class _PlutoDropDownCellListState extends State<PlutoDropDownCellList> {
   final Color appColorGreyDisableButton = const Color(0xffe1e7ee);
   final Color appColorGreyPrimaryText = const Color(0xff7d8da6);
 
-  bool showDropdownList = true;     /// 셀 enter 키 조작으로 포커스 아웃시, 드랍다운 리스트 위젯 dispose 순간 position 날라감. 안보임 처리.
+  /// 셀 enter 키 조작으로 포커스 아웃시, 드랍다운 리스트 위젯 dispose 순간 position 날라감. 안보임 처리.
+  bool showDropdownList = true;
 
   @override
   void initState() {
     super.initState();
-    focusNodes = List.generate(widget.items.length, (index) => FocusNode(onKey: _handleKeyboardEvent));
-    int initialSelectedValueIndex = widget.items.indexWhere((element) => element == widget.initialValue);
+    focusNodes = List.generate(
+        widget.items.length, (index) => FocusNode(onKey: _handleKeyboardEvent));
+    int initialSelectedValueIndex =
+        widget.items.indexWhere((element) => element == widget.initialValue);
     currentFocusedIdx = initialSelectedValueIndex;
     focusNodes[currentFocusedIdx].requestFocus();
   }
@@ -345,13 +358,13 @@ class _PlutoDropDownCellListState extends State<PlutoDropDownCellList> {
       }
 
       if (keyManager.isEnter) {
-        setState(() =>showDropdownList = false);
+        setState(() => showDropdownList = false);
         Navigator.of(context).pop(selectedValue);
         return KeyEventResult.handled;
       }
 
       if (keyManager.isEsc) {
-        setState(() =>showDropdownList = false);
+        setState(() => showDropdownList = false);
         Navigator.of(context).pop();
         widget.stateManager.setEditing(false);
         return KeyEventResult.handled;
@@ -415,28 +428,59 @@ class _PlutoDropDownCellListState extends State<PlutoDropDownCellList> {
                     child: ListView.builder(
                       padding: EdgeInsets.zero,
                       itemCount: widget.items.length,
-                      itemBuilder: (context, index) => InkWell(
-                        onTap: () => Navigator.of(context).pop(selectedValue),
-                        child: SizedBox(
-                          height: 36,
-                          width: double.infinity,
-                          child: ElevatedButton(
-                            focusNode: focusNodes[index],
-                            onFocusChange: (hasFocus) {
-                              if (hasFocus) {
-                                setState(() {
-                                  selectedValue = widget.items[index];
-                                });
-                              }
-                            },
-                            onPressed: () =>
-                                Navigator.of(context).pop(selectedValue),
-                            style: _setButtonStyle(),
-                            child: Text(widget.items[index]),
-                            // child: Text(toValue(items[index])),
-                          ),
+
+                      /// 0816 dwk edited itemBuilder.
+                      itemBuilder: (context, index) => SizedBox(
+                        height: 36,
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          focusNode: focusNodes[index],
+                          onHover: (hovered) {
+                            /// for changing focus using mouse
+                            if (hovered) {
+                              setState(() {
+                                selectedValue = widget.items[index];
+                              });
+                            }
+                          },
+                          onFocusChange: (hasFocus) {
+                            /// for changing focus using keyboard arrow
+                            if (hasFocus) {
+                              setState(() {
+                                selectedValue = widget.items[index];
+                              });
+                            }
+                          },
+                          onPressed: () {
+                            setState(() => showDropdownList = false);
+                            Navigator.of(context).pop(selectedValue);
+                          },
+                          style: _setButtonStyle(),
+                          child: Text(widget.items[index]),
                         ),
                       ),
+                      // itemBuilder: (context, index) => InkWell(
+                      //   onTap: () => Navigator.of(context).pop(selectedValue),
+                      //   child: SizedBox(
+                      //     height: 36,
+                      //     width: double.infinity,
+                      //     child: ElevatedButton(
+                      //       focusNode: focusNodes[index],
+                      //       onFocusChange: (hasFocus) {
+                      //         if (hasFocus) {
+                      //           setState(() {
+                      //             selectedValue = widget.items[index];
+                      //           });
+                      //         }
+                      //       },
+                      //       onPressed: () =>
+                      //           Navigator.of(context).pop(selectedValue),
+                      //       style: _setButtonStyle(),
+                      //       child: Text(widget.items[index]),
+                      //       // child: Text(toValue(items[index])),
+                      //     ),
+                      //   ),
+                      // ),
                     ),
                   ),
                 ),
@@ -453,7 +497,8 @@ class _PlutoDropDownCellListState extends State<PlutoDropDownCellList> {
       shape: MaterialStateProperty.all(
         const RoundedRectangleBorder(borderRadius: BorderRadius.zero),
       ),
-      backgroundColor: MaterialStateProperty.resolveWith((states) {
+      backgroundColor: MaterialStateProperty.resolveWith(
+        (states) {
           if (states.contains(MaterialState.hovered) ||
               states.contains(MaterialState.focused)) {
             return appColorPrimary20;
@@ -461,7 +506,8 @@ class _PlutoDropDownCellListState extends State<PlutoDropDownCellList> {
           return Colors.white;
         },
       ),
-      foregroundColor: MaterialStateProperty.resolveWith((states) {
+      foregroundColor: MaterialStateProperty.resolveWith(
+        (states) {
           if (states.contains(MaterialState.hovered) ||
               states.contains(MaterialState.focused)) {
             return appColorPrimary100;
@@ -469,7 +515,8 @@ class _PlutoDropDownCellListState extends State<PlutoDropDownCellList> {
           return appColorGreyPrimaryText;
         },
       ),
-      textStyle: MaterialStateProperty.resolveWith((states) {
+      textStyle: MaterialStateProperty.resolveWith(
+        (states) {
           if (states.contains(MaterialState.hovered) ||
               states.contains(MaterialState.focused)) {
             return TextStyle(

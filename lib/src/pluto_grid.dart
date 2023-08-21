@@ -1230,7 +1230,14 @@ class _GridContainer extends StatelessWidget {
             ),
           ),
           child: Padding(
-            padding: const EdgeInsets.only(left: 2),    /// 우측 이중선 제거용 패딩.
+            /// 0816 dwk edited.
+            padding: const EdgeInsets.fromLTRB(
+              PlutoGridSettings.gridPadding,
+              PlutoGridSettings.gridPadding,
+              0,
+              0,
+            ),
+            // padding: const EdgeInsets.only(left: 2),    /// 우측 이중선 제거용 패딩.
             child: borderRadius == BorderRadius.zero
                 ? child
                 : ClipRRect(borderRadius: borderRadius, child: child),

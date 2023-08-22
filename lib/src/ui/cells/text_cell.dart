@@ -164,25 +164,14 @@ mixin TextCellState<T extends TextCell> on State<T> implements TextFieldProps {
     _cellEditingStatus = _CellEditingStatus.updated;
   }
 
-  /// 다이렉트 인풋 edit 시, 텍스트 블록잡히는 문제 해결위해 prevStatus, if 절 추가
+  /// 0614 dwk edited. 다이렉트 인풋 edit 시, 텍스트 블록잡히는 문제 해결위해 prevStatus, if 절 추가하여 커서이동
+  /// 0822 dwk edited. 다시 원본으로 원복.
   void _handleOnChanged(String value) {
-    final prevStatus = _cellEditingStatus;
-
     _cellEditingStatus = formattedValue != value.toString()
         ? _CellEditingStatus.changed
         : _initialCellValue.toString() == value.toString()
             ? _CellEditingStatus.init
             : _CellEditingStatus.updated;
-
-    if (prevStatus == _CellEditingStatus.init &&
-        _cellEditingStatus == _CellEditingStatus.changed &&
-        _textController.text.length == 1) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        _textController.selection = TextSelection.fromPosition(
-          TextPosition(offset: _textController.text.length),
-        );
-      });
-    }
   }
 
   void _handleOnComplete() {
@@ -197,7 +186,7 @@ mixin TextCellState<T extends TextCell> on State<T> implements TextFieldProps {
       FocusScope.of(context).requestFocus(FocusNode());
     });
 
-    /// 한 행의 끝에서 다음 행으로 포커스 이동 로직.
+    /// 0118 dwk edited. 한 행의 끝에서 다음 행으로 포커스 이동 로직.
     bool isEndOfOneRow = widget.stateManager.currentCellPosition!.columnIdx! ==
         widget.stateManager.refColumns.length - 1;
     bool isLastRow = widget.stateManager.currentCellPosition!.rowIdx! ==
@@ -539,26 +528,15 @@ mixin AutoCompleteTextCellState<T extends AutoCompleteTextCell> on State<T>
     _updateOverlay();
   }
 
-  /// 다이렉트 인풋 edit 시, 텍스트 블록잡히는 문제 해결위해 prevStatus, if 절 추가
+  /// 0614 dwk edited. 다이렉트 인풋 edit 시, 텍스트 블록잡히는 문제 해결위해 prevStatus, if 절 추가하여 커서이동
+  /// 0822 dwk edited. 다시 원본으로 원복.
   Future<void> _onChangedField(String value) async {
-    final prevStatus = _cellEditingStatus;
-
     /// Pluto Lib 의 _handleOnChanged 내용
     _cellEditingStatus = formattedValue != value.toString()
         ? _CellEditingStatus.changed
         : _initialCellValue.toString() == value.toString()
             ? _CellEditingStatus.init
             : _CellEditingStatus.updated;
-
-    if (prevStatus == _CellEditingStatus.init &&
-        _cellEditingStatus == _CellEditingStatus.changed &&
-        textController.text.length == 1) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        textController.selection = TextSelection.fromPosition(
-          TextPosition(offset: textController.text.length),
-        );
-      });
-    }
 
     /// Autocomplete 위젯의 _onChangedField 내용
     final TextEditingValue textEditValue = textController.value;
@@ -696,7 +674,7 @@ mixin AutoCompleteTextCellState<T extends AutoCompleteTextCell> on State<T>
   void _handleOnComplete() {
     final old = textController.text;
 
-    /// 이걸 해주어야 위,아래키 입력 포커스이동 및 엔터 입력으로 값 반영됨.
+    /// 0127 dwk edited. 이걸 해주어야 위,아래키 입력 포커스이동 및 엔터 입력으로 값 반영됨.
     _onFieldSubmitted();
 
     _changeValue();
@@ -708,7 +686,7 @@ mixin AutoCompleteTextCellState<T extends AutoCompleteTextCell> on State<T>
       FocusScope.of(context).requestFocus(FocusNode());
     });
 
-    /// 한 행의 끝에서 다음 행으로 포커스 이동 로직.
+    /// 0127 dwk edited. 한 행의 끝에서 다음 행으로 포커스 이동 로직.
     bool isEndOfOneRow = widget.stateManager.currentCellPosition!.columnIdx! ==
         widget.stateManager.refColumns.length - 1;
     bool isLastRow = widget.stateManager.currentCellPosition!.rowIdx! ==

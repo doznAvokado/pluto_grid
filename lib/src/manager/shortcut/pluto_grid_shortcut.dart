@@ -130,8 +130,26 @@ class PlutoGridShortcut {
     // Copy the values of cells
     LogicalKeySet(LogicalKeyboardKey.control, LogicalKeyboardKey.keyC):
         const PlutoGridActionCopyValues(),
+
+    /// 0822 dwk added. (소문자 c)
+    LogicalKeySet(
+            LogicalKeyboardKey.control, const LogicalKeyboardKey(0x0000000043)):
+        const PlutoGridActionCopyValues(),
+
+    /// 0822 dwk added. (한글 ㅊ)
+    LogicalKeySet(LogicalKeyboardKey.control, const LogicalKeyboardKey(12618)):
+        const PlutoGridActionCopyValues(),
     // Paste values from clipboard
     LogicalKeySet(LogicalKeyboardKey.control, LogicalKeyboardKey.keyV):
+        const PlutoGridActionPasteValues(),
+
+    /// 0822 dwk added. (소문자 v)
+    LogicalKeySet(
+            LogicalKeyboardKey.control, const LogicalKeyboardKey(0x0000000056)):
+        const PlutoGridActionPasteValues(),
+
+    /// 0822 dwk added. (한글 ㅍ)
+    LogicalKeySet(LogicalKeyboardKey.control, const LogicalKeyboardKey(12621)):
         const PlutoGridActionPasteValues(),
     // Select all cells or rows
     LogicalKeySet(LogicalKeyboardKey.control, LogicalKeyboardKey.keyA):

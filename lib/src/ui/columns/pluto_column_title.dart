@@ -360,7 +360,7 @@ class _ColumnWidget extends StatelessWidget {
     if (column.enableRowChecked) {
       customRendererWidget = stateManager.currentCellPosition == null
           ? column.renderer!(PlutoColumnRendererContext(
-              // dwk: create fake row, cell
+              // dwk added. create fake row, cell
               column: column,
               rowIdx: -1,
               row: PlutoRow(cells: {}),

@@ -30,8 +30,7 @@ class PlutoTextCell extends StatefulWidget implements TextCell {
   PlutoTextCellState createState() => PlutoTextCellState();
 }
 
-class PlutoTextCellState extends State<PlutoTextCell>
-    with TextCellState<PlutoTextCell> {
+class PlutoTextCellState extends State<PlutoTextCell> with TextCellState<PlutoTextCell> {
   @override
   List<TextInputFormatter>? inputFormatters;
 
@@ -43,23 +42,26 @@ class PlutoTextCellState extends State<PlutoTextCell>
   void initState() {
     super.initState();
     final textColumn = widget.column.type.text;
+    inputFormatters = textColumn.inputFormatters;
 
     if (textColumn.isOnlyDigits) {
-      inputFormatters = textColumn.inputFormatters ??
-          [
-            DecimalTextInputFormatter(
-              decimalRange: 10,
-              activatedNegativeValues: false,
-              allowFirstDot: false,
-              decimalSeparator: "",
-            ),
-          ];
+      final onlyDigitInputFormatter = DecimalTextInputFormatter(
+        decimalRange: 10,
+        activatedNegativeValues: false,
+        allowFirstDot: false,
+        decimalSeparator: "",
+      );
+
+      if (textColumn.inputFormatters != null) {
+        inputFormatters = [...textColumn.inputFormatters!, onlyDigitInputFormatter];
+      } else {
+        inputFormatters = [onlyDigitInputFormatter];
+      }
     }
   }
 }
 
-class PlutoAutoCompleteTextCell extends StatefulWidget
-    implements AutoCompleteTextCell {
+class PlutoAutoCompleteTextCell extends StatefulWidget implements AutoCompleteTextCell {
   @override
   final PlutoGridStateManager stateManager;
 
@@ -81,8 +83,7 @@ class PlutoAutoCompleteTextCell extends StatefulWidget
   }) : super(key: key);
 
   @override
-  State<PlutoAutoCompleteTextCell> createState() =>
-      _PlutoAutoCompleteTextCellState();
+  State<PlutoAutoCompleteTextCell> createState() => _PlutoAutoCompleteTextCellState();
 }
 
 class _PlutoAutoCompleteTextCellState extends State<PlutoAutoCompleteTextCell>
@@ -98,17 +99,21 @@ class _PlutoAutoCompleteTextCellState extends State<PlutoAutoCompleteTextCell>
   void initState() {
     super.initState();
     final autoCompleteColumn = widget.column.type.autoComplete;
+    inputFormatters = autoCompleteColumn.inputFormatters;
 
     if (autoCompleteColumn.isOnlyDigits) {
-      inputFormatters = autoCompleteColumn.inputFormatters ??
-          [
-            DecimalTextInputFormatter(
-              decimalRange: 10,
-              activatedNegativeValues: false,
-              allowFirstDot: false,
-              decimalSeparator: "",
-            ),
-          ];
+      final onlyDigitInputFormatter = DecimalTextInputFormatter(
+        decimalRange: 10,
+        activatedNegativeValues: false,
+        allowFirstDot: false,
+        decimalSeparator: "",
+      );
+
+      if (autoCompleteColumn.inputFormatters != null) {
+        inputFormatters = [...autoCompleteColumn.inputFormatters!, onlyDigitInputFormatter];
+      } else {
+        inputFormatters = [onlyDigitInputFormatter];
+      }
     }
   }
 }

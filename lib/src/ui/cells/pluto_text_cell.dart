@@ -58,6 +58,16 @@ class PlutoTextCellState extends State<PlutoTextCell> with TextCellState<PlutoTe
         inputFormatters = [onlyDigitInputFormatter];
       }
     }
+
+    if (textColumn.denySpacingCharacter) {
+      final denySpaceInputFormatter = FilteringTextInputFormatter.deny(' ');
+
+      if (textColumn.inputFormatters != null) {
+        inputFormatters = [...textColumn.inputFormatters!, denySpaceInputFormatter];
+      } else {
+        inputFormatters = [denySpaceInputFormatter];
+      }
+    }
   }
 }
 
@@ -113,6 +123,16 @@ class _PlutoAutoCompleteTextCellState extends State<PlutoAutoCompleteTextCell>
         inputFormatters = [...autoCompleteColumn.inputFormatters!, onlyDigitInputFormatter];
       } else {
         inputFormatters = [onlyDigitInputFormatter];
+      }
+    }
+
+    if (autoCompleteColumn.denySpacingCharacter) {
+      final denySpaceInputFormatter = FilteringTextInputFormatter.deny(' ');
+
+      if (autoCompleteColumn.inputFormatters != null) {
+        inputFormatters = [...autoCompleteColumn.inputFormatters!, denySpaceInputFormatter];
+      } else {
+        inputFormatters = [denySpaceInputFormatter];
       }
     }
   }

@@ -293,7 +293,24 @@ mixin CellState implements IPlutoGridState {
         } catch (e) {
           return oldValue;
         }
-      } else {
+      }
+
+      if (column.type.text.denySpacingCharacter) {
+        return newValue.toString().replaceAll(' ', '');
+      }
+    }
+
+    if (column.type.isAutoComplete) {
+      if (column.type.autoComplete.isOnlyDigits) {
+        try {
+          int.parse(newValue);
+          return newValue;
+        } catch (e) {
+          return oldValue;
+        }
+      }
+
+      if (column.type.autoComplete.denySpacingCharacter) {
         return newValue.toString().replaceAll(' ', '');
       }
     }

@@ -14,6 +14,7 @@ abstract class PlutoColumnType {
     List<TextInputFormatter>? inputFormatters,
     double listHeight = 36 * 5,
     double itemHeight = 36,
+    bool denySpacingCharacter = false,
   }) {
     return PlutoColumnTypeAutoComplete(
       defaultValue: defaultValue,
@@ -23,6 +24,7 @@ abstract class PlutoColumnType {
       items: items,
       listHeight: listHeight,
       itemHeight: itemHeight,
+      denySpacingCharacter: denySpacingCharacter,
     );
   }
 
@@ -56,6 +58,7 @@ abstract class PlutoColumnType {
     String? validRegExp,
     bool Function(dynamic value)? customValidation,
     List<TextInputFormatter>? inputFormatters,
+    bool denySpacingCharacter = false,
   }) {
     return PlutoColumnTypeText(
       defaultValue: defaultValue,
@@ -64,6 +67,7 @@ abstract class PlutoColumnType {
       validRegExp: validRegExp,
       customValidation: customValidation,
       inputFormatters: inputFormatters,
+      denySpacingCharacter: denySpacingCharacter,
     );
   }
 
@@ -298,11 +302,9 @@ extension PlutoColumnTypeExtension on PlutoColumnType {
 
   bool get hasFormat => this is PlutoColumnTypeHasFormat;
 
-  bool get applyFormatOnInit =>
-      hasFormat ? (this as PlutoColumnTypeHasFormat).applyFormatOnInit : false;
+  bool get applyFormatOnInit => hasFormat ? (this as PlutoColumnTypeHasFormat).applyFormatOnInit : false;
 
-  dynamic applyFormat(dynamic value) =>
-      hasFormat ? (this as PlutoColumnTypeHasFormat).applyFormat(value) : value;
+  dynamic applyFormat(dynamic value) => hasFormat ? (this as PlutoColumnTypeHasFormat).applyFormat(value) : value;
 }
 
 class PlutoColumnTypeAutoComplete implements PlutoColumnType {
@@ -314,6 +316,7 @@ class PlutoColumnTypeAutoComplete implements PlutoColumnType {
   List<String> items;
   final double listHeight;
   final double itemHeight;
+  final bool denySpacingCharacter;
 
   PlutoColumnTypeAutoComplete({
     this.defaultValue,
@@ -323,6 +326,7 @@ class PlutoColumnTypeAutoComplete implements PlutoColumnType {
     this.maxLength,
     this.listHeight = 36 * 5,
     this.itemHeight = 36,
+    this.denySpacingCharacter = false,
   });
 
   @override
@@ -339,8 +343,7 @@ class PlutoColumnTypeAutoComplete implements PlutoColumnType {
   }
 }
 
-class PlutoColumnTypeDropDown
-    implements PlutoColumnType, PlutoColumnTypeHasPopupIcon {
+class PlutoColumnTypeDropDown implements PlutoColumnType, PlutoColumnTypeHasPopupIcon {
   @override
   final dynamic defaultValue;
   final List<dynamic> items;
@@ -385,6 +388,7 @@ class PlutoColumnTypeText implements PlutoColumnType {
   final String? validRegExp;
   final bool Function(dynamic value)? customValidation;
   final List<TextInputFormatter>? inputFormatters;
+  final bool denySpacingCharacter;
 
   @override
   final dynamic defaultValue;
@@ -396,6 +400,7 @@ class PlutoColumnTypeText implements PlutoColumnType {
     this.validRegExp,
     this.customValidation,
     this.inputFormatters,
+    this.denySpacingCharacter = false,
   });
 
   @override
@@ -531,8 +536,7 @@ class PlutoColumnTypeCurrency
   late final int decimalPoint;
 }
 
-class PlutoColumnTypeSelect
-    implements PlutoColumnType, PlutoColumnTypeHasPopupIcon {
+class PlutoColumnTypeSelect implements PlutoColumnType, PlutoColumnTypeHasPopupIcon {
   @override
   final dynamic defaultValue;
 
@@ -657,8 +661,7 @@ class PlutoColumnTypeDate
   }
 }
 
-class PlutoColumnTypeTime
-    implements PlutoColumnType, PlutoColumnTypeHasPopupIcon {
+class PlutoColumnTypeTime implements PlutoColumnType, PlutoColumnTypeHasPopupIcon {
   @override
   final dynamic defaultValue;
 
@@ -775,9 +778,7 @@ mixin PlutoColumnTypeWithNumberFormat {
       match += numberFormat.symbols.MINUS_SIGN;
     }
 
-    formatted = formatted
-        .replaceAll(RegExp('[^$match]'), '')
-        .replaceFirst(numberFormat.symbols.DECIMAL_SEP, '.');
+    formatted = formatted.replaceAll(RegExp('[^$match]'), '').replaceFirst(numberFormat.symbols.DECIMAL_SEP, '.');
 
     final num formattedNumber = num.tryParse(formatted) ?? 0;
 

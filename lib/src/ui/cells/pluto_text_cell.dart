@@ -42,31 +42,30 @@ class PlutoTextCellState extends State<PlutoTextCell> with TextCellState<PlutoTe
   void initState() {
     super.initState();
     final textColumn = widget.column.type.text;
-    inputFormatters = textColumn.inputFormatters;
+    final List<TextInputFormatter> additionalFormatters = [];
+
+    if (textColumn.maxLength != null) {
+      additionalFormatters.add(
+          LengthLimitingTextInputFormatter(textColumn.maxLength, maxLengthEnforcement: MaxLengthEnforcement.enforced));
+    }
 
     if (textColumn.isOnlyDigits) {
-      final onlyDigitInputFormatter = DecimalTextInputFormatter(
+      additionalFormatters.add(DecimalTextInputFormatter(
         decimalRange: 10,
         activatedNegativeValues: false,
         allowFirstDot: false,
         decimalSeparator: "",
-      );
-
-      if (textColumn.inputFormatters != null) {
-        inputFormatters = [...textColumn.inputFormatters!, onlyDigitInputFormatter];
-      } else {
-        inputFormatters = [onlyDigitInputFormatter];
-      }
+      ));
     }
 
     if (textColumn.denySpacingCharacter) {
-      final denySpaceInputFormatter = FilteringTextInputFormatter.deny(' ');
+      additionalFormatters.add(FilteringTextInputFormatter.deny(' '));
+    }
 
-      if (textColumn.inputFormatters != null) {
-        inputFormatters = [...textColumn.inputFormatters!, denySpaceInputFormatter];
-      } else {
-        inputFormatters = [denySpaceInputFormatter];
-      }
+    if (textColumn.inputFormatters != null) {
+      inputFormatters = [...textColumn.inputFormatters!, ...additionalFormatters];
+    } else {
+      inputFormatters = [...additionalFormatters];
     }
   }
 }
@@ -109,31 +108,30 @@ class _PlutoAutoCompleteTextCellState extends State<PlutoAutoCompleteTextCell>
   void initState() {
     super.initState();
     final autoCompleteColumn = widget.column.type.autoComplete;
-    inputFormatters = autoCompleteColumn.inputFormatters;
+    final List<TextInputFormatter> additionalFormatters = [];
+
+    if (autoCompleteColumn.maxLength != null) {
+      additionalFormatters.add(LengthLimitingTextInputFormatter(autoCompleteColumn.maxLength,
+          maxLengthEnforcement: MaxLengthEnforcement.enforced));
+    }
 
     if (autoCompleteColumn.isOnlyDigits) {
-      final onlyDigitInputFormatter = DecimalTextInputFormatter(
+      additionalFormatters.add(DecimalTextInputFormatter(
         decimalRange: 10,
         activatedNegativeValues: false,
         allowFirstDot: false,
         decimalSeparator: "",
-      );
-
-      if (autoCompleteColumn.inputFormatters != null) {
-        inputFormatters = [...autoCompleteColumn.inputFormatters!, onlyDigitInputFormatter];
-      } else {
-        inputFormatters = [onlyDigitInputFormatter];
-      }
+      ));
     }
 
     if (autoCompleteColumn.denySpacingCharacter) {
-      final denySpaceInputFormatter = FilteringTextInputFormatter.deny(' ');
+      additionalFormatters.add(FilteringTextInputFormatter.deny(' '));
+    }
 
-      if (autoCompleteColumn.inputFormatters != null) {
-        inputFormatters = [...autoCompleteColumn.inputFormatters!, denySpaceInputFormatter];
-      } else {
-        inputFormatters = [denySpaceInputFormatter];
-      }
+    if (autoCompleteColumn.inputFormatters != null) {
+      inputFormatters = [...autoCompleteColumn.inputFormatters!, ...additionalFormatters];
+    } else {
+      inputFormatters = [...additionalFormatters];
     }
   }
 }

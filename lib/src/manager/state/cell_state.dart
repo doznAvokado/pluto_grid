@@ -289,6 +289,11 @@ mixin CellState implements IPlutoGridState {
       if (column.type.text.isOnlyDigits) {
         try {
           int.parse(newValue);
+
+          if (column.type.text.maxLength != null && newValue.toString().length >= column.type.text.maxLength!) {
+            newValue = newValue.toString().substring(0, column.type.text.maxLength!);
+          }
+
           return newValue;
         } catch (e) {
           return oldValue;
@@ -304,6 +309,12 @@ mixin CellState implements IPlutoGridState {
       if (column.type.autoComplete.isOnlyDigits) {
         try {
           int.parse(newValue);
+
+          if (column.type.autoComplete.maxLength != null &&
+              newValue.toString().length >= column.type.autoComplete.maxLength!) {
+            newValue = newValue.toString().substring(0, column.type.autoComplete.maxLength!);
+          }
+
           return newValue;
         } catch (e) {
           return oldValue;

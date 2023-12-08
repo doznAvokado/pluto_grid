@@ -62,6 +62,15 @@ class PlutoTextCellState extends State<PlutoTextCell> with TextCellState<PlutoTe
       additionalFormatters.add(FilteringTextInputFormatter.deny(' '));
     }
 
+    if (textColumn.denySpecialCharacter) {
+      additionalFormatters
+          .add(FilteringTextInputFormatter(RegExp(r"[^ㄱ-ㅎ가-힣ㅏ-ㅣa-zA-Z0-9]|[\\\[\]\^\_\`\₩]+"), allow: false));
+    }
+
+    if (textColumn.denyNumbers) {
+      additionalFormatters.add(FilteringTextInputFormatter(RegExp(r"[0-9]+"), allow: false));
+    }
+
     if (textColumn.inputFormatters != null) {
       inputFormatters = [...textColumn.inputFormatters!, ...additionalFormatters];
     } else {
@@ -126,6 +135,15 @@ class _PlutoAutoCompleteTextCellState extends State<PlutoAutoCompleteTextCell>
 
     if (autoCompleteColumn.denySpacingCharacter) {
       additionalFormatters.add(FilteringTextInputFormatter.deny(' '));
+    }
+
+    if (autoCompleteColumn.denySpecialCharacter) {
+      additionalFormatters
+          .add(FilteringTextInputFormatter(RegExp(r"[^ㄱ-ㅎ가-힣ㅏ-ㅣa-zA-Z0-9]|[\\\[\]\^\_\`\₩]+"), allow: false));
+    }
+
+    if (autoCompleteColumn.denyNumbers) {
+      additionalFormatters.add(FilteringTextInputFormatter(RegExp(r"[0-9]+"), allow: false));
     }
 
     if (autoCompleteColumn.inputFormatters != null) {

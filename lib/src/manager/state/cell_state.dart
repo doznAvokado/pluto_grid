@@ -301,8 +301,18 @@ mixin CellState implements IPlutoGridState {
       }
 
       if (column.type.text.denySpacingCharacter) {
-        return newValue.toString().replaceAll(' ', '');
+        newValue = newValue.toString().replaceAll(' ', '');
       }
+
+      if (column.type.text.denySpecialCharacter) {
+        newValue = newValue.toString().replaceAll(RegExp(r"[^ㄱ-ㅎ가-힣ㅏ-ㅣa-zA-Z0-9]|[\\\[\]\^\_\`\₩]+"), '');
+      }
+
+      if (column.type.text.denyNumbers) {
+        newValue = newValue.toString().replaceAll(RegExp(r"[0-9]+"), '');
+      }
+
+      return newValue;
     }
 
     if (column.type.isAutoComplete) {
@@ -322,8 +332,18 @@ mixin CellState implements IPlutoGridState {
       }
 
       if (column.type.autoComplete.denySpacingCharacter) {
-        return newValue.toString().replaceAll(' ', '');
+        newValue = newValue.toString().replaceAll(' ', '');
       }
+
+      if (column.type.autoComplete.denySpecialCharacter) {
+        newValue = newValue.toString().replaceAll(RegExp(r"[^ㄱ-ㅎ가-힣ㅏ-ㅣa-zA-Z0-9]|[\\\[\]\^\_\`\₩]+"), '');
+      }
+
+      if (column.type.autoComplete.denyNumbers) {
+        newValue = newValue.toString().replaceAll(RegExp(r"[0-9]+"), '');
+      }
+
+      return newValue;
     }
 
     if (column.type.isDropdown) {

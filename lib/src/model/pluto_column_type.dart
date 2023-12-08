@@ -15,6 +15,8 @@ abstract class PlutoColumnType {
     double listHeight = 36 * 5,
     double itemHeight = 36,
     bool denySpacingCharacter = false,
+    bool denySpecialCharacter = false,
+    bool denyNumbers = false,
   }) {
     return PlutoColumnTypeAutoComplete(
       defaultValue: defaultValue,
@@ -25,6 +27,8 @@ abstract class PlutoColumnType {
       listHeight: listHeight,
       itemHeight: itemHeight,
       denySpacingCharacter: denySpacingCharacter,
+      denySpecialCharacter: denySpecialCharacter,
+      denyNumbers: denyNumbers,
     );
   }
 
@@ -59,6 +63,8 @@ abstract class PlutoColumnType {
     bool Function(dynamic value)? customValidation,
     List<TextInputFormatter>? inputFormatters,
     bool denySpacingCharacter = false,
+    bool denySpecialCharacter = false,
+    bool denyNumbers = false,
   }) {
     return PlutoColumnTypeText(
       defaultValue: defaultValue,
@@ -68,6 +74,8 @@ abstract class PlutoColumnType {
       customValidation: customValidation,
       inputFormatters: inputFormatters,
       denySpacingCharacter: denySpacingCharacter,
+      denySpecialCharacter: denySpecialCharacter,
+      denyNumbers: denyNumbers,
     );
   }
 
@@ -317,6 +325,8 @@ class PlutoColumnTypeAutoComplete implements PlutoColumnType {
   final double listHeight;
   final double itemHeight;
   final bool denySpacingCharacter;
+  final bool denySpecialCharacter;
+  final bool denyNumbers;
 
   PlutoColumnTypeAutoComplete({
     this.defaultValue,
@@ -327,6 +337,8 @@ class PlutoColumnTypeAutoComplete implements PlutoColumnType {
     this.listHeight = 36 * 5,
     this.itemHeight = 36,
     this.denySpacingCharacter = false,
+    this.denySpecialCharacter = false,
+    this.denyNumbers = false,
   });
 
   @override
@@ -389,6 +401,8 @@ class PlutoColumnTypeText implements PlutoColumnType {
   final bool Function(dynamic value)? customValidation;
   final List<TextInputFormatter>? inputFormatters;
   final bool denySpacingCharacter;
+  final bool denySpecialCharacter;
+  final bool denyNumbers;
 
   @override
   final dynamic defaultValue;
@@ -401,6 +415,8 @@ class PlutoColumnTypeText implements PlutoColumnType {
     this.customValidation,
     this.inputFormatters,
     this.denySpacingCharacter = false,
+    this.denySpecialCharacter = false,
+    this.denyNumbers = false,
   });
 
   @override

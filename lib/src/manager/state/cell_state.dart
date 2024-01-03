@@ -347,6 +347,10 @@ mixin CellState implements IPlutoGridState {
     }
 
     if (column.type.isDropdown) {
+      if (column.type.dropdown.items.contains(newValue)) {
+        return newValue;
+      }
+
       return oldValue;
     }
 

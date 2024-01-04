@@ -65,6 +65,8 @@ abstract class PlutoColumnType {
     bool denySpacingCharacter = false,
     bool denySpecialCharacter = false,
     bool denyNumbers = false,
+    String hintText = '',
+    TextStyle? hintTextStyle,
   }) {
     return PlutoColumnTypeText(
       defaultValue: defaultValue,
@@ -76,6 +78,8 @@ abstract class PlutoColumnType {
       denySpacingCharacter: denySpacingCharacter,
       denySpecialCharacter: denySpecialCharacter,
       denyNumbers: denyNumbers,
+      hintText: hintText,
+      hintTextStyle: hintTextStyle,
     );
   }
 
@@ -403,6 +407,8 @@ class PlutoColumnTypeText implements PlutoColumnType {
   final bool denySpacingCharacter;
   final bool denySpecialCharacter;
   final bool denyNumbers;
+  final String hintText;
+  final TextStyle? hintTextStyle;
 
   @override
   final dynamic defaultValue;
@@ -417,6 +423,8 @@ class PlutoColumnTypeText implements PlutoColumnType {
     this.denySpacingCharacter = false,
     this.denySpecialCharacter = false,
     this.denyNumbers = false,
+    this.hintText = '',
+    this.hintTextStyle,
   });
 
   @override

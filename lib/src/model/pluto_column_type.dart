@@ -34,7 +34,7 @@ abstract class PlutoColumnType {
 
   factory PlutoColumnType.dropdown({
     dynamic defaultValue,
-    required List<dynamic> items,
+    List<dynamic> items = const [],
     String? toValue,
     Function(dynamic value)? onChanged,
     bool enableColumnFilter = false,
@@ -362,7 +362,7 @@ class PlutoColumnTypeAutoComplete implements PlutoColumnType {
 class PlutoColumnTypeDropDown implements PlutoColumnType, PlutoColumnTypeHasPopupIcon {
   @override
   final dynamic defaultValue;
-  final List<dynamic> items;
+  List<dynamic> items;
   final String? toValue;
   final void Function(dynamic value)? onChanged;
   final bool enableColumnFilter;

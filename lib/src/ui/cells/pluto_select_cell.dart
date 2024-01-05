@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:pluto_grid/pluto_grid.dart';
 
 import 'popup_cell.dart';
@@ -28,8 +29,7 @@ class PlutoSelectCell extends StatefulWidget implements PopupCell {
   PlutoSelectCellState createState() => PlutoSelectCellState();
 }
 
-class PlutoSelectCellState extends State<PlutoSelectCell>
-    with PopupCellState<PlutoSelectCell> {
+class PlutoSelectCellState extends State<PlutoSelectCell> with PopupCellState<PlutoSelectCell> {
   @override
   List<PlutoColumn> popupColumns = [];
 
@@ -47,12 +47,9 @@ class PlutoSelectCellState extends State<PlutoSelectCell>
 
     enableColumnFilter = widget.column.type.select.enableColumnFilter;
 
-    final columnFilterHeight = enableColumnFilter
-        ? widget.stateManager.configuration.style.columnFilterHeight
-        : 0;
+    final columnFilterHeight = enableColumnFilter ? widget.stateManager.configuration.style.columnFilterHeight : 0;
 
-    final rowsHeight = widget.column.type.select.items.length *
-        widget.stateManager.rowTotalHeight;
+    final rowsHeight = widget.column.type.select.items.length * widget.stateManager.rowTotalHeight;
 
     popupHeight = widget.stateManager.configuration.style.columnHeight +
         columnFilterHeight +
@@ -120,8 +117,7 @@ class _PlutoDropDownCellState extends State<PlutoDropDownCell> {
   final dropdownButtonKey = GlobalKey();
 
   late Size screenSize = MediaQuery.of(context).size;
-  late RenderBox buttonRenderBox =
-      dropdownButtonKey.currentContext!.findRenderObject() as RenderBox;
+  late RenderBox buttonRenderBox = dropdownButtonKey.currentContext!.findRenderObject() as RenderBox;
   late Offset buttonPosition = Offset(
     buttonRenderBox.localToGlobal(Offset.zero).dx,
     buttonRenderBox.localToGlobal(Offset.zero).dy,
@@ -160,13 +156,11 @@ class _PlutoDropDownCellState extends State<PlutoDropDownCell> {
         return KeyEventResult.handled;
       }
       if (keyManager.isLeft) {
-        widget.stateManager
-            .moveCurrentCell(PlutoMoveDirection.left, force: true);
+        widget.stateManager.moveCurrentCell(PlutoMoveDirection.left, force: true);
         return KeyEventResult.handled;
       }
       if (keyManager.isRight) {
-        widget.stateManager
-            .moveCurrentCell(PlutoMoveDirection.right, force: true);
+        widget.stateManager.moveCurrentCell(PlutoMoveDirection.right, force: true);
         return KeyEventResult.handled;
       }
     }
@@ -176,12 +170,13 @@ class _PlutoDropDownCellState extends State<PlutoDropDownCell> {
     return KeyEventResult.handled;
   }
 
-  openDropdownList() async {
+  openDropdownList({bool ensureVisibleWhenScroll = true}) async {
     final result = await showDialog(
         context: context,
         barrierColor: Colors.transparent,
         builder: (context) => PlutoDropDownCellList(
               stateManager: widget.stateManager,
+              ensureVisibleWhenScroll: ensureVisibleWhenScroll,
               offset: buttonPosition,
               width: buttonSize.width,
               isUpside: screenSize.height / 2 <= buttonPosition.dy,
@@ -196,8 +191,7 @@ class _PlutoDropDownCellState extends State<PlutoDropDownCell> {
     if (widget.cell.value != result) {
       widget.stateManager.changeCellValue(widget.cell, result, notify: false);
     }
-    widget.stateManager
-        .moveCurrentCell(PlutoMoveDirection.right, force: true, notify: false);
+    widget.stateManager.moveCurrentCell(PlutoMoveDirection.right, force: true, notify: false);
     widget.stateManager.setKeepFocus(true, notify: false);
     widget.stateManager.setEditing(true);
   }
@@ -241,7 +235,7 @@ class _PlutoDropDownCellState extends State<PlutoDropDownCell> {
               );
             });
 
-            openDropdownList();
+            openDropdownList(ensureVisibleWhenScroll: false);
 
             isChangeFocus = true;
           },
@@ -254,18 +248,14 @@ class _PlutoDropDownCellState extends State<PlutoDropDownCell> {
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w400,
-                    color: prevFocus
-                        ? appColorPrimary100
-                        : appColorGreyPrimaryText,
+                    color: prevFocus ? appColorPrimary100 : appColorGreyPrimaryText,
                     height: 17.5 / 14,
                     letterSpacing: -0.5,
                   ),
                   textAlign: TextAlign.center,
                 ),
               ),
-              prevFocus
-                  ? widget.column.type.dropdown.focusedIcon!
-                  : widget.column.type.dropdown.defaultIcon!,
+              prevFocus ? widget.column.type.dropdown.focusedIcon! : widget.column.type.dropdown.defaultIcon!,
             ],
           ),
         ),
@@ -276,6 +266,7 @@ class _PlutoDropDownCellState extends State<PlutoDropDownCell> {
 
 class PlutoDropDownCellList extends StatefulWidget {
   final PlutoGridStateManager stateManager;
+  final bool ensureVisibleWhenScroll;
   final Offset offset;
   final double width;
   final bool isUpside;
@@ -285,6 +276,7 @@ class PlutoDropDownCellList extends StatefulWidget {
 
   const PlutoDropDownCellList({
     required this.stateManager,
+    required this.ensureVisibleWhenScroll,
     required this.offset,
     required this.width,
     required this.isUpside,
@@ -299,6 +291,7 @@ class PlutoDropDownCellList extends StatefulWidget {
 }
 
 class _PlutoDropDownCellListState extends State<PlutoDropDownCellList> {
+  final scrollController = ScrollController();
   late final List<FocusNode> focusNodes;
   int currentFocusedIdx = 0;
   dynamic selectedValue;
@@ -314,11 +307,18 @@ class _PlutoDropDownCellListState extends State<PlutoDropDownCellList> {
   @override
   void initState() {
     super.initState();
-    focusNodes = List.generate(
-        widget.items.length, (index) => FocusNode(onKey: _handleKeyboardEvent));
-    int initialSelectedValueIndex =
-        widget.items.indexWhere((element) => element == widget.initialValue);
+    focusNodes = List.generate(widget.items.length, (index) => FocusNode(onKey: _handleKeyboardEvent));
+
+    int initialSelectedValueIndex = widget.items.indexWhere((element) => element == widget.initialValue);
     currentFocusedIdx = initialSelectedValueIndex;
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      scrollController.animateTo(
+        currentFocusedIdx * 36,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+      );
+    });
     focusNodes[currentFocusedIdx].requestFocus();
   }
 
@@ -327,6 +327,7 @@ class _PlutoDropDownCellListState extends State<PlutoDropDownCellList> {
     for (FocusNode node in focusNodes) {
       node.dispose();
     }
+    scrollController.dispose();
     super.dispose();
   }
 
@@ -396,16 +397,12 @@ class _PlutoDropDownCellListState extends State<PlutoDropDownCellList> {
               bottom: !widget.isUpside ? null : widget.offset.dy,
               child: CompositedTransformFollower(
                 link: widget.layerLink,
-                targetAnchor:
-                    widget.isUpside ? Alignment.topLeft : Alignment.bottomLeft,
-                followerAnchor:
-                    widget.isUpside ? Alignment.bottomLeft : Alignment.topLeft,
+                targetAnchor: widget.isUpside ? Alignment.topLeft : Alignment.bottomLeft,
+                followerAnchor: widget.isUpside ? Alignment.bottomLeft : Alignment.topLeft,
                 child: Container(
                   margin: const EdgeInsets.symmetric(vertical: 6),
                   padding: const EdgeInsets.symmetric(vertical: 10),
-                  height: widget.items.length >= 8
-                      ? 8 * 36 + 22
-                      : widget.items.length * 36 + 22,
+                  height: widget.items.length >= 8 ? 8 * 36 + 22 : widget.items.length * 36 + 22,
                   width: widget.width,
                   decoration: BoxDecoration(
                     borderRadius: const BorderRadius.all(Radius.circular(10)),
@@ -426,6 +423,7 @@ class _PlutoDropDownCellListState extends State<PlutoDropDownCellList> {
                   ),
                   child: FocusTraversalGroup(
                     child: ListView.builder(
+                      controller: scrollController,
                       padding: EdgeInsets.zero,
                       itemCount: widget.items.length,
 
@@ -433,54 +431,42 @@ class _PlutoDropDownCellListState extends State<PlutoDropDownCellList> {
                       itemBuilder: (context, index) => SizedBox(
                         height: 36,
                         width: double.infinity,
-                        child: ElevatedButton(
-                          focusNode: focusNodes[index],
-                          onHover: (hovered) {
-                            /// for changing focus using mouse
-                            if (hovered) {
-                              setState(() {
-                                selectedValue = widget.items[index];
+                        child: Builder(
+                          builder: (context) {
+                            if (currentFocusedIdx == index && widget.ensureVisibleWhenScroll) {
+                              SchedulerBinding.instance.addPostFrameCallback((_) {
+                                Scrollable.ensureVisible(context, alignment: 0.5);
                               });
                             }
+
+                            return ElevatedButton(
+                              focusNode: focusNodes[index],
+                              onHover: (hovered) {
+                                /// for changing focus using mouse
+                                if (hovered) {
+                                  setState(() {
+                                    selectedValue = widget.items[index];
+                                  });
+                                }
+                              },
+                              onFocusChange: (hasFocus) {
+                                /// for changing focus using keyboard arrow
+                                if (hasFocus) {
+                                  setState(() {
+                                    selectedValue = widget.items[index];
+                                  });
+                                }
+                              },
+                              onPressed: () {
+                                setState(() => showDropdownList = false);
+                                Navigator.of(context).pop(selectedValue);
+                              },
+                              style: _setButtonStyle(),
+                              child: Text(widget.items[index]),
+                            );
                           },
-                          onFocusChange: (hasFocus) {
-                            /// for changing focus using keyboard arrow
-                            if (hasFocus) {
-                              setState(() {
-                                selectedValue = widget.items[index];
-                              });
-                            }
-                          },
-                          onPressed: () {
-                            setState(() => showDropdownList = false);
-                            Navigator.of(context).pop(selectedValue);
-                          },
-                          style: _setButtonStyle(),
-                          child: Text(widget.items[index]),
                         ),
                       ),
-                      // itemBuilder: (context, index) => InkWell(
-                      //   onTap: () => Navigator.of(context).pop(selectedValue),
-                      //   child: SizedBox(
-                      //     height: 36,
-                      //     width: double.infinity,
-                      //     child: ElevatedButton(
-                      //       focusNode: focusNodes[index],
-                      //       onFocusChange: (hasFocus) {
-                      //         if (hasFocus) {
-                      //           setState(() {
-                      //             selectedValue = widget.items[index];
-                      //           });
-                      //         }
-                      //       },
-                      //       onPressed: () =>
-                      //           Navigator.of(context).pop(selectedValue),
-                      //       style: _setButtonStyle(),
-                      //       child: Text(widget.items[index]),
-                      //       // child: Text(toValue(items[index])),
-                      //     ),
-                      //   ),
-                      // ),
                     ),
                   ),
                 ),
@@ -499,8 +485,7 @@ class _PlutoDropDownCellListState extends State<PlutoDropDownCellList> {
       ),
       backgroundColor: MaterialStateProperty.resolveWith(
         (states) {
-          if (states.contains(MaterialState.hovered) ||
-              states.contains(MaterialState.focused)) {
+          if (states.contains(MaterialState.hovered) || states.contains(MaterialState.focused)) {
             return appColorPrimary20;
           }
           return Colors.white;
@@ -508,8 +493,7 @@ class _PlutoDropDownCellListState extends State<PlutoDropDownCellList> {
       ),
       foregroundColor: MaterialStateProperty.resolveWith(
         (states) {
-          if (states.contains(MaterialState.hovered) ||
-              states.contains(MaterialState.focused)) {
+          if (states.contains(MaterialState.hovered) || states.contains(MaterialState.focused)) {
             return appColorPrimary100;
           }
           return appColorGreyPrimaryText;
@@ -517,8 +501,7 @@ class _PlutoDropDownCellListState extends State<PlutoDropDownCellList> {
       ),
       textStyle: MaterialStateProperty.resolveWith(
         (states) {
-          if (states.contains(MaterialState.hovered) ||
-              states.contains(MaterialState.focused)) {
+          if (states.contains(MaterialState.hovered) || states.contains(MaterialState.focused)) {
             return TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.w700,

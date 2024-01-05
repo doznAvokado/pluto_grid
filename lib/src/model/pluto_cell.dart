@@ -113,6 +113,12 @@ class PlutoCell {
     }
   }
 
+  void setDropDownColumnItemList(List<dynamic> newItem) {
+    if (_column != null && _column!.type.isDropdown) {
+      _column!.type.dropdown.items = newItem;
+    }
+  }
+
   void setColumn(PlutoColumn column) {
     _column = column;
     _valueForSorting = _getValueForSorting();
@@ -139,8 +145,7 @@ class PlutoCell {
     _value = _column!.type.applyFormat(_value);
 
     if (_column!.type is PlutoColumnTypeWithNumberFormat) {
-      _value =
-          (_column!.type as PlutoColumnTypeWithNumberFormat).toNumber(_value);
+      _value = (_column!.type as PlutoColumnTypeWithNumberFormat).toNumber(_value);
     }
 
     _needToApplyFormatOnInit = false;

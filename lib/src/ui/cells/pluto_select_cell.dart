@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:pluto_grid/pluto_grid.dart';
@@ -170,13 +171,12 @@ class _PlutoDropDownCellState extends State<PlutoDropDownCell> {
     return KeyEventResult.handled;
   }
 
-  openDropdownList({bool ensureVisibleWhenScroll = true}) async {
+  openDropdownList() async {
     final result = await showDialog(
         context: context,
         barrierColor: Colors.transparent,
         builder: (context) => PlutoDropDownCellList(
               stateManager: widget.stateManager,
-              ensureVisibleWhenScroll: ensureVisibleWhenScroll,
               offset: buttonPosition,
               width: buttonSize.width,
               isUpside: screenSize.height / 2 <= buttonPosition.dy,
@@ -235,7 +235,7 @@ class _PlutoDropDownCellState extends State<PlutoDropDownCell> {
               );
             });
 
-            openDropdownList(ensureVisibleWhenScroll: false);
+            openDropdownList();
 
             isChangeFocus = true;
           },
@@ -266,7 +266,6 @@ class _PlutoDropDownCellState extends State<PlutoDropDownCell> {
 
 class PlutoDropDownCellList extends StatefulWidget {
   final PlutoGridStateManager stateManager;
-  final bool ensureVisibleWhenScroll;
   final Offset offset;
   final double width;
   final bool isUpside;
@@ -276,7 +275,6 @@ class PlutoDropDownCellList extends StatefulWidget {
 
   const PlutoDropDownCellList({
     required this.stateManager,
-    required this.ensureVisibleWhenScroll,
     required this.offset,
     required this.width,
     required this.isUpside,
@@ -303,6 +301,7 @@ class _PlutoDropDownCellListState extends State<PlutoDropDownCellList> {
 
   /// 셀 enter 키 조작으로 포커스 아웃시, 드랍다운 리스트 위젯 dispose 순간 position 날라감. 안보임 처리.
   bool showDropdownList = true;
+  bool isScrolling = false;
 
   @override
   void initState() {
@@ -338,6 +337,8 @@ class _PlutoDropDownCellListState extends State<PlutoDropDownCellList> {
     );
 
     if (keyManager.isKeyDownEvent) {
+      setState(() => isScrolling = false);
+
       if (keyManager.isUp) {
         if (currentFocusedIdx > 0) {
           setState(() {
@@ -422,49 +423,56 @@ class _PlutoDropDownCellListState extends State<PlutoDropDownCellList> {
                     ],
                   ),
                   child: FocusTraversalGroup(
-                    child: ListView.builder(
-                      controller: scrollController,
-                      padding: EdgeInsets.zero,
-                      itemCount: widget.items.length,
+                    child: Listener(
+                      onPointerSignal: (PointerSignalEvent event) {
+                        if (event is PointerScrollEvent) {
+                          setState(() => isScrolling = true);
+                        }
+                      },
+                      child: ListView.builder(
+                        controller: scrollController,
+                        padding: EdgeInsets.zero,
+                        itemCount: widget.items.length,
 
-                      /// 0816 dwk edited itemBuilder.
-                      itemBuilder: (context, index) => SizedBox(
-                        height: 36,
-                        width: double.infinity,
-                        child: Builder(
-                          builder: (context) {
-                            if (currentFocusedIdx == index && widget.ensureVisibleWhenScroll) {
-                              SchedulerBinding.instance.addPostFrameCallback((_) {
-                                Scrollable.ensureVisible(context, alignment: 0.5);
-                              });
-                            }
+                        /// 0816 dwk edited itemBuilder.
+                        itemBuilder: (context, index) => SizedBox(
+                          height: 36,
+                          width: double.infinity,
+                          child: Builder(
+                            builder: (context) {
+                              if (currentFocusedIdx == index && !isScrolling) {
+                                SchedulerBinding.instance.addPostFrameCallback((_) {
+                                  Scrollable.ensureVisible(context, alignment: 0.5);
+                                });
+                              }
 
-                            return ElevatedButton(
-                              focusNode: focusNodes[index],
-                              onHover: (hovered) {
-                                /// for changing focus using mouse
-                                if (hovered) {
-                                  setState(() {
-                                    selectedValue = widget.items[index];
-                                  });
-                                }
-                              },
-                              onFocusChange: (hasFocus) {
-                                /// for changing focus using keyboard arrow
-                                if (hasFocus) {
-                                  setState(() {
-                                    selectedValue = widget.items[index];
-                                  });
-                                }
-                              },
-                              onPressed: () {
-                                setState(() => showDropdownList = false);
-                                Navigator.of(context).pop(selectedValue);
-                              },
-                              style: _setButtonStyle(),
-                              child: Text(widget.items[index]),
-                            );
-                          },
+                              return ElevatedButton(
+                                focusNode: focusNodes[index],
+                                onHover: (hovered) {
+                                  /// for changing focus using mouse
+                                  if (hovered) {
+                                    setState(() {
+                                      selectedValue = widget.items[index];
+                                    });
+                                  }
+                                },
+                                onFocusChange: (hasFocus) {
+                                  /// for changing focus using keyboard arrow
+                                  if (hasFocus) {
+                                    setState(() {
+                                      selectedValue = widget.items[index];
+                                    });
+                                  }
+                                },
+                                onPressed: () {
+                                  setState(() => showDropdownList = false);
+                                  Navigator.of(context).pop(selectedValue);
+                                },
+                                style: _setButtonStyle(),
+                                child: Text(widget.items[index]),
+                              );
+                            },
+                          ),
                         ),
                       ),
                     ),

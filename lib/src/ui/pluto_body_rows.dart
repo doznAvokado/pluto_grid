@@ -62,9 +62,7 @@ class PlutoBodyRowsState extends PlutoStateWithChange<PlutoBodyRows> {
   }
 
   List<PlutoColumn> _getColumns() {
-    return stateManager.showFrozenColumn == true
-        ? stateManager.bodyColumns
-        : stateManager.columns;
+    return stateManager.showFrozenColumn == true ? stateManager.bodyColumns : stateManager.columns;
   }
 
   @override
@@ -138,8 +136,7 @@ class ListResizeDelegate extends SingleChildLayoutDelegate {
 
   List<PlutoColumn> columns;
 
-  ListResizeDelegate(this.stateManager, this.columns)
-      : super(relayout: stateManager.resizingChangeNotifier);
+  ListResizeDelegate(this.stateManager, this.columns) : super(relayout: stateManager.resizingChangeNotifier);
 
   @override
   bool shouldRelayout(covariant SingleChildLayoutDelegate oldDelegate) {

@@ -312,6 +312,10 @@ mixin CellState implements IPlutoGridState {
         newValue = newValue.toString().replaceAll(RegExp(r"[0-9]+"), '');
       }
 
+      if (column.type.text.denyEmpty && newValue.toString().isEmpty) {
+        return oldValue;
+      }
+
       return newValue;
     }
 

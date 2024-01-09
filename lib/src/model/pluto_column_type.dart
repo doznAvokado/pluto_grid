@@ -65,6 +65,7 @@ abstract class PlutoColumnType {
     bool denySpacingCharacter = false,
     bool denySpecialCharacter = false,
     bool denyNumbers = false,
+    bool denyEmpty = false,
     String hintText = '',
     TextStyle? hintTextStyle,
   }) {
@@ -78,6 +79,7 @@ abstract class PlutoColumnType {
       denySpacingCharacter: denySpacingCharacter,
       denySpecialCharacter: denySpecialCharacter,
       denyNumbers: denyNumbers,
+      denyEmpty: denyEmpty,
       hintText: hintText,
       hintTextStyle: hintTextStyle,
     );
@@ -407,6 +409,7 @@ class PlutoColumnTypeText implements PlutoColumnType {
   final bool denySpacingCharacter;
   final bool denySpecialCharacter;
   final bool denyNumbers;
+  final bool denyEmpty;
   final String hintText;
   final TextStyle? hintTextStyle;
 
@@ -423,6 +426,7 @@ class PlutoColumnTypeText implements PlutoColumnType {
     this.denySpacingCharacter = false,
     this.denySpecialCharacter = false,
     this.denyNumbers = false,
+    this.denyEmpty = false,
     this.hintText = '',
     this.hintTextStyle,
   });

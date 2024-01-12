@@ -3,8 +3,7 @@ import 'package:pluto_grid/pluto_grid.dart';
 
 import 'ui.dart';
 
-class PlutoBaseCell extends StatelessWidget
-    implements PlutoVisibilityLayoutChild {
+class PlutoBaseCell extends StatelessWidget implements PlutoVisibilityLayoutChild {
   final PlutoCell cell;
 
   final PlutoColumn column;
@@ -98,9 +97,7 @@ class PlutoBaseCell extends StatelessWidget
   }
 
   void Function(TapDownDetails details)? _onSecondaryTapOrNull() {
-    return stateManager.onRowSecondaryTap == null
-        ? null
-        : _handleOnSecondaryTap;
+    return stateManager.onRowSecondaryTap == null ? null : _handleOnSecondaryTap;
   }
 
   @override
@@ -120,8 +117,7 @@ class PlutoBaseCell extends StatelessWidget
         rowIdx: rowIdx,
         row: row,
         column: column,
-        cellPadding: column.cellPadding ??
-            stateManager.configuration.style.defaultCellPadding,
+        cellPadding: column.cellPadding ?? stateManager.configuration.style.defaultCellPadding,
         stateManager: stateManager,
         child: _Cell(
           stateManager: stateManager,
@@ -182,13 +178,10 @@ class _CellContainerState extends PlutoStateWithChange<_CellContainer> {
     final style = stateManager.style;
 
     final isCurrentCell = stateManager.isCurrentCell(widget.cell);
-    final isCheckboxCell =
-        stateManager.currentCell?.column.enableRowChecked == true;
+    final isCheckboxCell = stateManager.currentCell?.column.enableRowChecked == true;
 
     final currentRowIndex = stateManager.currentRowIdx ?? 0;
-    final prevRowIsSeparation = currentRowIndex != 0
-        ? stateManager.rows[currentRowIndex - 1].separateFromNext
-        : false;
+    final prevRowIsSeparation = currentRowIndex != 0 ? stateManager.rows[currentRowIndex - 1].separateFromNext : false;
 
     _decoration = update(
       _decoration,
@@ -202,8 +195,7 @@ class _CellContainerState extends PlutoStateWithChange<_CellContainer> {
           widget.column,
           widget.rowIdx,
         ),
-        isGroupedRowCell: stateManager.enabledRowGroups &&
-            stateManager.rowGroupDelegate!.isExpandableCell(widget.cell),
+        isGroupedRowCell: stateManager.enabledRowGroups && stateManager.rowGroupDelegate!.isExpandableCell(widget.cell),
         enableCellVerticalBorder: style.enableCellBorderVertical,
         borderColor: style.borderColor,
         activatedBorderColor: style.activatedBorderColor,
@@ -268,10 +260,17 @@ class _CellContainerState extends PlutoStateWithChange<_CellContainer> {
     required bool borderingTopNormally,
   }) {
     /// 0819 dwk edited. 체크박스 & 명부 다이얼로그로 추가할 때, 초기 행은 valid 체크 no.
-    final isValid =
-        isCheckboxCell || widget.cell.skipValidation || widget.row.isNew
-            ? true
-            : widget.column.type.isValid(widget.cell.value);
+    final isValid = isCheckboxCell || widget.cell.skipValidation || widget.row.isNew
+        ? true
+        : widget.column.type.isValid(widget.cell.value);
+
+    final bool isEditableCell = widget.cell.column.enableEditingMode ?? true;
+
+    final cellBorderColor = isEditableCell
+        ? isValid
+            ? activatedBorderColor
+            : wrongCellColor
+        : inactivatedBorderColor;
 
     /// 0819 readOnly 일때, 셀 선택 효과 없애기 위함. readOnly에서 스크롤 되게끔 하고자 함.
     if (widget.stateManager.mode == PlutoGridMode.readOnly) {
@@ -307,22 +306,24 @@ class _CellContainerState extends PlutoStateWithChange<_CellContainer> {
         border: hasFocus
             ? Border(
                 top: BorderSide(
-                  color: isValid ? activatedBorderColor : wrongCellColor,
+                  color: cellBorderColor,
                   width: borderingTopNormally ? 2 : 2.3,
-                  strokeAlign: borderingTopNormally
-                      ? BorderSide.strokeAlignInside
-                      : BorderSide.strokeAlignOutside,
+                  strokeAlign: borderingTopNormally ? BorderSide.strokeAlignInside : BorderSide.strokeAlignOutside,
                 ),
                 left: BorderSide(
-                  color: isValid ? activatedBorderColor : wrongCellColor,
+                  color: cellBorderColor,
                   width: 2,
                 ),
                 right: BorderSide(
-                  color: isValid ? activatedBorderColor : wrongCellColor,
-                  width: 2,
+                  color: isEditableCell
+                      ? isValid
+                          ? activatedBorderColor
+                          : wrongCellColor
+                      : borderColor, // editable 아닌 셀 클릭시, 우측 보더만 굵기와 색상지정.
+                  width: isEditableCell ? 2 : 1,
                 ),
                 bottom: BorderSide(
-                  color: isValid ? activatedBorderColor : wrongCellColor,
+                  color: cellBorderColor,
                   width: 2,
                 ),
               ) // 셀 한번누름 & 편집모드 시 스타일

@@ -180,9 +180,6 @@ class _CellContainerState extends PlutoStateWithChange<_CellContainer> {
     final isCurrentCell = stateManager.isCurrentCell(widget.cell);
     final isCheckboxCell = stateManager.currentCell?.column.enableRowChecked == true;
 
-    final currentRowIndex = stateManager.currentRowIdx ?? 0;
-    final prevRowIsSeparation = currentRowIndex != 0 ? stateManager.rows[currentRowIndex - 1].separateFromNext : false;
-
     _decoration = update(
       _decoration,
       _boxDecoration(
@@ -206,10 +203,8 @@ class _CellContainerState extends PlutoStateWithChange<_CellContainer> {
         cellColorInEditState: style.cellColorInEditState,
         cellColorInReadOnlyState: style.cellColorInReadOnlyState,
         cellColorGroupedRow: style.cellColorGroupedRow,
-        separateBottomBorderSide: style.separateBottomBorderSide,
         selectingMode: stateManager.selectingMode,
         isCheckboxCell: isCheckboxCell,
-        borderingTopNormally: currentRowIndex == 0 || !prevRowIsSeparation,
       ),
     );
   }
@@ -254,10 +249,8 @@ class _CellContainerState extends PlutoStateWithChange<_CellContainer> {
     required Color cellColorInEditState,
     required Color cellColorInReadOnlyState,
     required Color? cellColorGroupedRow,
-    required BorderSide separateBottomBorderSide,
     required PlutoGridSelectingMode selectingMode,
     required bool isCheckboxCell,
-    required bool borderingTopNormally,
   }) {
     /// 0819 dwk edited. 체크박스 & 명부 다이얼로그로 추가할 때, 초기 행은 valid 체크 no.
     final isValid = isCheckboxCell || widget.cell.skipValidation || widget.row.isNew
@@ -278,13 +271,8 @@ class _CellContainerState extends PlutoStateWithChange<_CellContainer> {
         color: isGroupedRowCell ? cellColorGroupedRow : null,
         border: enableCellVerticalBorder
             ? BorderDirectional(
-                bottom: widget.row.separateFromNext
-                    ? separateBottomBorderSide // 행과 행 구분 설정 되어있을 때
-                    : BorderSide.none,
-                end: BorderSide(
-                  color: borderColor,
-                  width: 1.0,
-                ),
+                bottom: BorderSide.none,
+                end: BorderSide(color: borderColor, width: 1.0),
               )
             : null,
       );
@@ -305,15 +293,8 @@ class _CellContainerState extends PlutoStateWithChange<_CellContainer> {
         ),
         border: hasFocus
             ? Border(
-                top: BorderSide(
-                  color: cellBorderColor,
-                  width: borderingTopNormally ? 2 : 2.3,
-                  strokeAlign: borderingTopNormally ? BorderSide.strokeAlignInside : BorderSide.strokeAlignOutside,
-                ),
-                left: BorderSide(
-                  color: cellBorderColor,
-                  width: 2,
-                ),
+                top: BorderSide(color: cellBorderColor, width: 2),
+                left: BorderSide(color: cellBorderColor, width: 2),
                 right: BorderSide(
                   color: isEditableCell
                       ? isValid
@@ -322,18 +303,11 @@ class _CellContainerState extends PlutoStateWithChange<_CellContainer> {
                       : borderColor, // editable 아닌 셀 클릭시, 우측 보더만 굵기와 색상지정.
                   width: isEditableCell ? 2 : 1,
                 ),
-                bottom: BorderSide(
-                  color: cellBorderColor,
-                  width: 2,
-                ),
+                bottom: BorderSide(color: cellBorderColor, width: 2),
               ) // 셀 한번누름 & 편집모드 시 스타일
             : Border(
-                bottom: widget.row.separateFromNext
-                    ? separateBottomBorderSide // 구분자 행의 셀 선택 후 드랍다운 셀 눌렀을 시, 하단 border 사라짐 이슈 방지.
-                    : BorderSide.none,
-                right: BorderSide(
-                  color: borderColor,
-                ),
+                bottom: BorderSide.none,
+                right: BorderSide(color: borderColor),
               ), // 셀을 한번 선택 후, 드랍다운 눌렀을 시, 우측 border 사라짐 이슈 방지.
       );
     } else if (isSelectedCell) {
@@ -350,13 +324,8 @@ class _CellContainerState extends PlutoStateWithChange<_CellContainer> {
         color: isGroupedRowCell ? cellColorGroupedRow : null,
         border: enableCellVerticalBorder
             ? BorderDirectional(
-                bottom: widget.row.separateFromNext
-                    ? separateBottomBorderSide // 행과 행 구분 설정 되어있을 때
-                    : BorderSide.none,
-                end: BorderSide(
-                  color: borderColor,
-                  width: 1.0,
-                ),
+                bottom: BorderSide.none,
+                end: BorderSide(color: borderColor, width: 1.0),
               )
             : null,
       );

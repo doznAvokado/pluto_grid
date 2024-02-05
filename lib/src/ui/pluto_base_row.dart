@@ -288,12 +288,15 @@ class _RowContainerWidgetState extends PlutoStateWithChange<_RowContainerWidget>
     final bool isFocusedCurrentRow = isCurrentRow && stateManager.hasFocus;
 
     /// 240201 dwk 행 구분선 기능 추가.
-    final bool isCurrentRowSeparation = stateManager.rows[widget.rowIdx].separateFromNext;
-
+    bool isCurrentRowSeparation = false;
     bool isPrevRowSeparation = false;
 
-    if (widget.rowIdx > 0) {
-      isPrevRowSeparation = stateManager.rows[widget.rowIdx - 1].separateFromNext;
+    if (widget.rowIdx < stateManager.rows.length) {
+      isCurrentRowSeparation = stateManager.rows[widget.rowIdx].separateFromNext;
+
+      if (widget.rowIdx != 0) {
+        isPrevRowSeparation = stateManager.rows[widget.rowIdx - 1].separateFromNext;
+      }
     }
 
     final Color rowColor = _getRowColor(

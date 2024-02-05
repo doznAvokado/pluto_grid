@@ -263,7 +263,9 @@ class _CellContainerState extends PlutoStateWithChange<_CellContainer> {
         ? isValid
             ? activatedBorderColor
             : wrongCellColor
-        : inactivatedBorderColor;
+        : isCheckboxCell
+            ? activatedBorderColor
+            : inactivatedBorderColor;
 
     /// 0819 readOnly 일때, 셀 선택 효과 없애기 위함. readOnly에서 스크롤 되게끔 하고자 함.
     if (widget.stateManager.mode == PlutoGridMode.readOnly) {
@@ -281,30 +283,20 @@ class _CellContainerState extends PlutoStateWithChange<_CellContainer> {
     if (isCurrentCell) {
       /// 현재 한번 선택한 셀 Border
       return BoxDecoration(
-        color: _currentCellColor(
-          hasFocus: hasFocus,
-          isEditing: isEditing,
-          readOnly: readOnly,
-          gridBackgroundColor: gridBackgroundColor,
-          activatedColor: activatedColor,
-          cellColorInReadOnlyState: cellColorInReadOnlyState,
-          cellColorInEditState: cellColorInEditState,
-          selectingMode: selectingMode,
-        ),
+        color: isEditableCell || isCheckboxCell
+            ? _currentCellColor(
+                hasFocus: hasFocus,
+                isEditing: isEditing,
+                readOnly: readOnly,
+                gridBackgroundColor: gridBackgroundColor,
+                activatedColor: activatedColor,
+                cellColorInReadOnlyState: cellColorInReadOnlyState,
+                cellColorInEditState: cellColorInEditState,
+                selectingMode: selectingMode,
+              )
+            : widget.stateManager.configuration.style.inactivatedCellColor,
         border: hasFocus
-            ? Border(
-                top: BorderSide(color: cellBorderColor, width: 2),
-                left: BorderSide(color: cellBorderColor, width: 2),
-                right: BorderSide(
-                  color: isEditableCell
-                      ? isValid
-                          ? activatedBorderColor
-                          : wrongCellColor
-                      : borderColor, // editable 아닌 셀 클릭시, 우측 보더만 굵기와 색상지정.
-                  width: isEditableCell ? 2 : 1,
-                ),
-                bottom: BorderSide(color: cellBorderColor, width: 2),
-              ) // 셀 한번누름 & 편집모드 시 스타일
+            ? Border.all(color: cellBorderColor, width: 2)
             : Border(
                 bottom: BorderSide.none,
                 right: BorderSide(color: borderColor),
@@ -313,9 +305,13 @@ class _CellContainerState extends PlutoStateWithChange<_CellContainer> {
     } else if (isSelectedCell) {
       /// PlutoGridSelectingMode 가 cell or horizontal 일 때.
       return BoxDecoration(
-        color: activatedColor,
+        color: isEditableCell
+            ? activatedColor
+            : isCheckboxCell
+                ? Colors.transparent
+                : widget.stateManager.configuration.style.inactivatedCellColor,
         border: Border.all(
-          color: hasFocus ? activatedBorderColor : inactivatedBorderColor,
+          color: hasFocus ? cellBorderColor : inactivatedBorderColor,
           width: 1,
         ),
       );

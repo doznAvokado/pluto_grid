@@ -90,8 +90,7 @@ class PlutoCustomCheckbox extends StatelessWidget {
                 activeColor: value == null ? unselectedColor : activeColor,
                 checkColor: checkColor,
                 shape: RoundedRectangleBorder(
-                    side: BorderSide(color: unselectedColor, width: 1),
-                    borderRadius: BorderRadius.circular(4)),
+                    side: BorderSide(color: unselectedColor, width: 1), borderRadius: BorderRadius.circular(4)),
               )
             : _CustomCheckbox(
                 containerWidth: containerWidth,
@@ -158,7 +157,7 @@ class _CustomCheckbox extends StatelessWidget {
       );
     }
 
-    /// 0816 dwk added.
+    ///TODO: 0816 dwk added.
     if (customCheckboxIcon == null) {
       return const SizedBox.shrink();
     }
@@ -166,12 +165,10 @@ class _CustomCheckbox extends StatelessWidget {
     return InkWell(
       onTap: () => onChanged!(!isChecked!),
       child: Row(
-        mainAxisAlignment:
-            MainAxisAlignment.center, // Cell Selecting 영역 셀 전체로 확장
+        mainAxisAlignment: MainAxisAlignment.center, // Cell Selecting 영역 셀 전체로 확장
         children: [
           Column(
-            mainAxisAlignment:
-                MainAxisAlignment.center, // Cell Selecting 영역 셀 전체로 확장
+            mainAxisAlignment: MainAxisAlignment.center, // Cell Selecting 영역 셀 전체로 확장
             children: [
               Container(
                 width: containerWidth,

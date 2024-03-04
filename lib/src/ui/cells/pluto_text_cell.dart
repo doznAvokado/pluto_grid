@@ -34,7 +34,7 @@ class PlutoTextCellState extends State<PlutoTextCell> with TextCellState<PlutoTe
   @override
   List<TextInputFormatter>? inputFormatters;
 
-  /// 0816 dwk disables below.
+  ///TODO: 0816 dwk disables below.
   // @override
   // late TextInputType keyboardType;
 
@@ -109,7 +109,7 @@ class _PlutoAutoCompleteTextCellState extends State<PlutoAutoCompleteTextCell>
   @override
   List<TextInputFormatter>? inputFormatters;
 
-  /// 0816 dwk disables below.
+  ///TODO: 0816 dwk disables below.
   // @override
   // late TextInputType keyboardType;
 

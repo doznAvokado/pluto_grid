@@ -252,7 +252,7 @@ class _CellContainerState extends PlutoStateWithChange<_CellContainer> {
     required PlutoGridSelectingMode selectingMode,
     required bool isCheckboxCell,
   }) {
-    /// 0819 dwk edited. 체크박스 & 명부 다이얼로그로 추가할 때, 초기 행은 valid 체크 no.
+    ///TODO: 0819 dwk edited. 체크박스 & 명부 다이얼로그로 추가할 때, 초기 행은 valid 체크 no.
     final isValid = isCheckboxCell || widget.cell.skipValidation || widget.row.isNew
         ? true
         : widget.column.type.isValid(widget.cell.value);

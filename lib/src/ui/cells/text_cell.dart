@@ -42,20 +42,21 @@ mixin TextCellState<T extends TextCell> on State<T> implements TextFieldProps {
 
   late _CellEditingStatus _cellEditingStatus;
 
-  /// 0816 dwk edited.
+  ///TODO: 0816 dwk edited.
   // @override
   // TextInputType get keyboardType => TextInputType.text;
   @override
   TextInputType get keyboardType =>
       widget.column.type.isText && widget.column.type.text.isOnlyDigits ? TextInputType.number : TextInputType.text;
 
-  /// 0816 dwk edited.
+  ///TODO: 0816 dwk edited.
   // @override
   // List<TextInputFormatter>? get inputFormatters => [];
   @override
   List<TextInputFormatter>? get inputFormatters =>
       widget.column.type.isText ? widget.column.type.text.inputFormatters : [];
 
+  ///TODO: 240104 dwk edited.
   String get formattedValue => widget.column.formattedValueForDisplayInEditing(widget.cell.value);
 
   @override
@@ -84,13 +85,16 @@ mixin TextCellState<T extends TextCell> on State<T> implements TextFieldProps {
      * if user do not press enter key, onEditingComplete is not called and the value is not saved.
      */
     if (_cellEditingStatus.isChanged) {
+      ///TODO: 0201 dwk. below codes are the plutoGrid v6.0.1 migration works.
       _changeValue();
     }
 
+    ///TODO: 240104 dwk edited.
     if (!widget.stateManager.isEditing || widget.stateManager.currentColumn?.enableEditingMode != true) {
       widget.stateManager.setTextEditingController(null);
     }
 
+    ///TODO: 0201 dwk. below codes are the plutoGrid v6.0.1 migration works.
     _debounce.dispose();
 
     _textController.dispose();
@@ -160,8 +164,8 @@ mixin TextCellState<T extends TextCell> on State<T> implements TextFieldProps {
     _cellEditingStatus = _CellEditingStatus.updated;
   }
 
-  /// 0614 dwk edited. 다이렉트 인풋 edit 시, 텍스트 블록잡히는 문제 해결위해 prevStatus, if 절 추가하여 커서이동
-  /// 0822 dwk edited. 다시 원본으로 원복.
+  ///TODO: 0614 dwk edited. 다이렉트 인풋 edit 시, 텍스트 블록잡히는 문제 해결위해 prevStatus, if 절 추가하여 커서이동
+  ///TODO: 0822 dwk edited. 다시 원본으로 원복.
   void _handleOnChanged(String value) {
     _cellEditingStatus = formattedValue != value.toString()
         ? _CellEditingStatus.changed
@@ -182,7 +186,7 @@ mixin TextCellState<T extends TextCell> on State<T> implements TextFieldProps {
       FocusScope.of(context).requestFocus(FocusNode());
     });
 
-    /// 0118 dwk edited. 한 행의 끝에서 다음 행으로 포커스 이동 로직.
+    ///TODO: 0118 dwk edited. 한 행의 끝에서 다음 행으로 포커스 이동 로직.
     bool isEndOfOneRow =
         widget.stateManager.currentCellPosition!.columnIdx! == widget.stateManager.refColumns.length - 1;
     bool isLastRow = widget.stateManager.currentCellPosition!.rowIdx! == widget.stateManager.rows.length - 1;
@@ -316,6 +320,7 @@ enum _CellEditingStatus {
   }
 }
 
+///TODO: 0127 dwk added AutoCompleteTextCell.
 abstract class AutoCompleteTextCell extends StatefulWidget {
   final PlutoGridStateManager stateManager;
 
@@ -334,6 +339,7 @@ abstract class AutoCompleteTextCell extends StatefulWidget {
   }) : super(key: key);
 }
 
+///TODO: 0127 dwk added AutoCompleteTextFieldProps.
 abstract class AutoCompleteTextFieldProps {
   TextInputType get keyboardType;
 
@@ -347,7 +353,7 @@ mixin AutoCompleteTextCellState<T extends AutoCompleteTextCell> on State<T> impl
   late final FocusNode cellFocus;
   late _CellEditingStatus _cellEditingStatus;
 
-  /// 0816 dwk added. should open upside check
+  ///TODO: 0816 dwk added. should open upside check
   late Size screenSize = MediaQuery.of(context).size;
   final autoCompleteCellKey = GlobalKey();
   late RenderBox autoCompleteCellRenderBox = autoCompleteCellKey.currentContext!.findRenderObject() as RenderBox;
@@ -359,7 +365,7 @@ mixin AutoCompleteTextCellState<T extends AutoCompleteTextCell> on State<T> impl
 
   late bool isUpside = screenSize.height / 2 <= autoCompleteCellPosition.dy;
 
-  /// 0816 dwk edited.
+  ///TODO: 0816 dwk edited.
   // @override
   // TextInputType get keyboardType => TextInputType.text;
   @override
@@ -367,7 +373,7 @@ mixin AutoCompleteTextCellState<T extends AutoCompleteTextCell> on State<T> impl
       ? TextInputType.number
       : TextInputType.text;
 
-  /// 0816 dwk edited.
+  ///TODO: 0816 dwk edited.
   // @override
   // List<TextInputFormatter>? get inputFormatters => [];
   @override
@@ -376,12 +382,12 @@ mixin AutoCompleteTextCellState<T extends AutoCompleteTextCell> on State<T> impl
 
   String get formattedValue => widget.column.formattedValueForDisplayInEditing(widget.cell.value);
 
-  /// ---- AutoComplete 관련 variables
+  ///TODO: 0127 dwk added. ---- AutoComplete 관련 variables
   final LayerLink _optionsLayerLink = LayerLink();
   final ValueNotifier<int> _highlightedOptionIndex = ValueNotifier<int>(0);
   Iterable<String> _options = Iterable<String>.empty();
 
-  /// AutoCompleteItemList Container
+  ///TODO: 0214 dwk added. AutoCompleteItemList Container
   OverlayEntry? _floatingOptions;
 
   String? _selection;
@@ -402,10 +408,10 @@ mixin AutoCompleteTextCellState<T extends AutoCompleteTextCell> on State<T> impl
     _initialCellValue = textController.text;
     _cellEditingStatus = _CellEditingStatus.init;
 
-    /// textController 의 _onChangedField Listen 은 반드시 필요. (오버레이 출력)
+    ///TODO: 0127 dwk added. textController 의 _onChangedField Listen 은 반드시 필요. (오버레이 출력)
     textController.addListener(() => _onChangedField(textController.text.toString()));
 
-    /// 오버레이 출력 상태에서 다른 셀 마우스 클릭시, 오버레이 사라지게 하는 역할.
+    ///TODO: 0127 dwk added. 오버레이 출력 상태에서 다른 셀 마우스 클릭시, 오버레이 사라지게 하는 역할.
     // cellFocus.addListener(_onChangedFocus);
 
     _updateOverlay();
@@ -512,8 +518,8 @@ mixin AutoCompleteTextCellState<T extends AutoCompleteTextCell> on State<T> impl
     _updateOverlay();
   }
 
-  /// 0614 dwk edited. 다이렉트 인풋 edit 시, 텍스트 블록잡히는 문제 해결위해 prevStatus, if 절 추가하여 커서이동
-  /// 0822 dwk edited. 다시 원본으로 원복.
+  ///TODO: 0614 dwk edited. 다이렉트 인풋 edit 시, 텍스트 블록잡히는 문제 해결위해 prevStatus, if 절 추가하여 커서이동
+  ///TODO: 0822 dwk edited. 다시 원본으로 원복.
   Future<void> _onChangedField(String value) async {
     /// Pluto Lib 의 _handleOnChanged 내용
     _cellEditingStatus = formattedValue != value.toString()
@@ -542,7 +548,7 @@ mixin AutoCompleteTextCellState<T extends AutoCompleteTextCell> on State<T> impl
     _updateOverlay();
   }
 
-  /// 0816 dwk added.
+  ///TODO: 0816 dwk added.
   _highLightItem({required bool highlightingForward}) {
     final int currentIndex = _highlightedOptionIndex.value;
 
@@ -581,7 +587,7 @@ mixin AutoCompleteTextCellState<T extends AutoCompleteTextCell> on State<T> impl
     if (_shouldShowOptions) {
       final OverlayEntry newFloatingOptions = OverlayEntry(
         builder: (BuildContext context) {
-          /// 0816 dwk edited.
+          ///TODO: 0816 dwk edited.
           return Positioned(
             top: isUpside ? null : autoCompleteCellPosition.dy,
             bottom: isUpside ? autoCompleteCellPosition.dy : null,
@@ -627,7 +633,7 @@ mixin AutoCompleteTextCellState<T extends AutoCompleteTextCell> on State<T> impl
 
   void _select(String nextSelection) {
     if (nextSelection == _selection) {
-      /// ValueNotifier 값 초기화 후 메소드 종료. (하이라이트 한 인덱스)
+      ///TODO: 0127 dwk added. ValueNotifier 값 초기화 후 메소드 종료. (하이라이트 한 인덱스)
       _highlightedOptionIndex.value = 0;
       return;
     }
@@ -648,7 +654,7 @@ mixin AutoCompleteTextCellState<T extends AutoCompleteTextCell> on State<T> impl
   void _handleOnComplete() {
     final old = textController.text;
 
-    /// 0127 dwk edited. 이걸 해주어야 위,아래키 입력 포커스이동 및 엔터 입력으로 값 반영됨.
+    ///TODO: 0127 dwk edited. 이걸 해주어야 위,아래키 입력 포커스이동 및 엔터 입력으로 값 반영됨.
     _onFieldSubmitted();
 
     _changeValue();
@@ -660,7 +666,7 @@ mixin AutoCompleteTextCellState<T extends AutoCompleteTextCell> on State<T> impl
       FocusScope.of(context).requestFocus(FocusNode());
     });
 
-    /// 0127 dwk edited. 한 행의 끝에서 다음 행으로 포커스 이동 로직.
+    ///TODO: 0127 dwk edited. 한 행의 끝에서 다음 행으로 포커스 이동 로직.
     bool isEndOfOneRow =
         widget.stateManager.currentCellPosition!.columnIdx! == widget.stateManager.refColumns.length - 1;
     bool isLastRow = widget.stateManager.currentCellPosition!.rowIdx! == widget.stateManager.rows.length - 1;
@@ -716,7 +722,7 @@ mixin AutoCompleteTextCellState<T extends AutoCompleteTextCell> on State<T> impl
       _restoreText();
     }
 
-    /// up, down key 시, AutoComplete List item 선택하도록.
+    ///TODO: 0127 dwk added. up, down key 시, AutoComplete List item 선택하도록.
     if (keyManager.isUp) {
       _highLightItem(highlightingForward: isUpside);
       return KeyEventResult.handled;
@@ -823,6 +829,7 @@ mixin AutoCompleteTextCellState<T extends AutoCompleteTextCell> on State<T> impl
   }
 }
 
+///TODO: 0127 dwk added _AutocompleteOptions.
 class _AutocompleteOptions<T extends Object> extends StatelessWidget {
   const _AutocompleteOptions({
     super.key,
@@ -864,7 +871,7 @@ class _AutocompleteOptions<T extends Object> extends StatelessWidget {
     return Align(
       alignment: Alignment.topLeft,
       child: Material(
-        /// ItemListContainer 외곽 Clipping.
+        ///TODO: 0127 dwk added. ItemListContainer 외곽 Clipping.
         borderRadius: BorderRadius.circular(10),
         color: Colors.white,
         elevation: 4.0,

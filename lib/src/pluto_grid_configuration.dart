@@ -386,13 +386,13 @@ class PlutoGridStyleConfig {
   /// Border color set when widgets such as [PlutoRow] and [PlutoCell] lose focus.
   final Color inactivatedBorderColor;
 
-  /// 240205 dwk added.
+  ///TODO: 240205 dwk added.
   final Color inactivatedCellColor;
 
-  /// 0819 dwk added.
+  ///TODO: 0819 dwk added.
   final Color wrongCellColor;
 
-  /// 07.17 추가
+  ///TODO: 0717 dwk added.
   final BorderSide separateBottomBorderSide;
 
   /// Icon size. (column menu, cell of popup type)
@@ -679,6 +679,7 @@ class PlutoGridScrollbarConfig {
   ///
   /// If set to false,
   /// the scroll bar will stop moving as soon as the scroll bar is released.
+  ///TODO: 1206 dwk added
   final bool enableScrollAfterDragEnd;
 
   final double scrollbarThickness;
@@ -702,6 +703,7 @@ class PlutoGridScrollbarConfig {
   final Radius scrollbarRadiusWhileDragging;
 
   /// Set the long press time of the scroll bar. 100 ms if not set.
+  ///TODO: 1206 dwk added
   final Duration? longPressDuration;
 
   final Set<PointerDeviceKind>? dragDevices;

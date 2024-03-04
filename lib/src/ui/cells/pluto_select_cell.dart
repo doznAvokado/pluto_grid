@@ -217,7 +217,7 @@ class _PlutoDropDownCellState extends State<PlutoDropDownCell> {
             elevation: 0,
             backgroundColor: Colors.transparent,
 
-            /// 0816 dwk edited. disables foregroundColor
+            ///TODO: 0816 dwk edited. disables foregroundColor
             // foregroundColor:
             //     prevFocus ? appColorPrimary20 : appColorGreySecondaryText,
             side: BorderSide.none,
@@ -227,7 +227,7 @@ class _PlutoDropDownCellState extends State<PlutoDropDownCell> {
             setState(() {
               prevFocus = true;
 
-              /// 누른시점에 size.height, buttonPosition update.
+              ///TODO: 0116 dwk edited. 누른시점에 size.height, buttonPosition update.
               screenSize = MediaQuery.of(context).size;
               buttonPosition = Offset(
                 buttonRenderBox.localToGlobal(Offset.zero).dx,
@@ -434,7 +434,7 @@ class _PlutoDropDownCellListState extends State<PlutoDropDownCellList> {
                         padding: EdgeInsets.zero,
                         itemCount: widget.items.length,
 
-                        /// 0816 dwk edited itemBuilder.
+                        ///TODO: 0816 dwk edited itemBuilder.
                         itemBuilder: (context, index) => SizedBox(
                           height: 36,
                           width: double.infinity,

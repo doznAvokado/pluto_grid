@@ -45,8 +45,7 @@ class PlutoGridKeyManager {
     required this.stateManager,
   });
 
-  final PublishSubject<PlutoKeyManagerEvent> _subject =
-      PublishSubject<PlutoKeyManagerEvent>();
+  final PublishSubject<PlutoKeyManagerEvent> _subject = PublishSubject<PlutoKeyManagerEvent>();
 
   PublishSubject<PlutoKeyManagerEvent> get subject => _subject;
 
@@ -63,12 +62,11 @@ class PlutoGridKeyManager {
   void init() {
     final normalStream = _subject.stream.where((event) => !event.needsThrottle);
 
-    final movingStream =
-        _subject.stream.where((event) => event.needsThrottle).transform(
-              ThrottleStreamTransformer(
-                (_) => TimerStream(_, const Duration(milliseconds: 1)),
-              ),
-            );
+    final movingStream = _subject.stream.where((event) => event.needsThrottle).transform(
+          ThrottleStreamTransformer(
+            (_) => TimerStream(_, const Duration(milliseconds: 1)),
+          ),
+        );
 
     _subscription = MergeStream([normalStream, movingStream]).listen(_handler);
   }
@@ -102,7 +100,7 @@ class PlutoGridKeyManager {
         return;
       }
 
-      /// 0724 dwk added. (isOnlyDigits 인 경우, 한글, 특수문자 최초 다이렉트 인풋 방지)
+      ///TODO: 0724 dwk added. (isOnlyDigits 인 경우, 한글, 특수문자 최초 다이렉트 인풋 방지)
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (stateManager.textEditingController != null) {
           String inputCharacter = keyEvent.event.character.toString();

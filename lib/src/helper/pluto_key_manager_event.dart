@@ -22,16 +22,13 @@ class PlutoKeyManagerEvent {
 
   bool get isVertical => isUp || isDown;
 
-  bool get isLeft =>
-      event.logicalKey.keyId == LogicalKeyboardKey.arrowLeft.keyId;
+  bool get isLeft => event.logicalKey.keyId == LogicalKeyboardKey.arrowLeft.keyId;
 
-  bool get isRight =>
-      event.logicalKey.keyId == LogicalKeyboardKey.arrowRight.keyId;
+  bool get isRight => event.logicalKey.keyId == LogicalKeyboardKey.arrowRight.keyId;
 
   bool get isUp => event.logicalKey.keyId == LogicalKeyboardKey.arrowUp.keyId;
 
-  bool get isDown =>
-      event.logicalKey.keyId == LogicalKeyboardKey.arrowDown.keyId;
+  bool get isDown => event.logicalKey.keyId == LogicalKeyboardKey.arrowDown.keyId;
 
   bool get isHome => event.logicalKey.keyId == LogicalKeyboardKey.home.keyId;
 
@@ -39,14 +36,12 @@ class PlutoKeyManagerEvent {
 
   bool get isPageUp {
     // windows 에서 pageUp keyId 가 0x10700000021.
-    return event.logicalKey.keyId == LogicalKeyboardKey.pageUp.keyId ||
-        event.logicalKey.keyId == 0x10700000021;
+    return event.logicalKey.keyId == LogicalKeyboardKey.pageUp.keyId || event.logicalKey.keyId == 0x10700000021;
   }
 
   bool get isPageDown {
     // windows 에서 pageDown keyId 가 0x10700000022.
-    return event.logicalKey.keyId == LogicalKeyboardKey.pageDown.keyId ||
-        event.logicalKey.keyId == 0x10700000022;
+    return event.logicalKey.keyId == LogicalKeyboardKey.pageDown.keyId || event.logicalKey.keyId == 0x10700000022;
   }
 
   bool get isEsc => event.logicalKey.keyId == LogicalKeyboardKey.escape.keyId;
@@ -63,8 +58,7 @@ class PlutoKeyManagerEvent {
 
   bool get isF4 => event.logicalKey.keyId == LogicalKeyboardKey.f4.keyId;
 
-  bool get isBackspace =>
-      event.logicalKey.keyId == LogicalKeyboardKey.backspace.keyId;
+  bool get isBackspace => event.logicalKey.keyId == LogicalKeyboardKey.backspace.keyId;
 
   bool get isShift =>
       event.logicalKey.keyId == LogicalKeyboardKey.shift.keyId ||
@@ -79,18 +73,15 @@ class PlutoKeyManagerEvent {
   bool get isCharacter => _characters.contains(event.logicalKey.keyId);
 
   bool get isCtrlC {
-    return isCtrlPressed &&
-        event.logicalKey.keyId == LogicalKeyboardKey.keyC.keyId;
+    return isCtrlPressed && event.logicalKey.keyId == LogicalKeyboardKey.keyC.keyId;
   }
 
   bool get isCtrlV {
-    return isCtrlPressed &&
-        event.logicalKey.keyId == LogicalKeyboardKey.keyV.keyId;
+    return isCtrlPressed && event.logicalKey.keyId == LogicalKeyboardKey.keyV.keyId;
   }
 
   bool get isCtrlA {
-    return isCtrlPressed &&
-        event.logicalKey.keyId == LogicalKeyboardKey.keyA.keyId;
+    return isCtrlPressed && event.logicalKey.keyId == LogicalKeyboardKey.keyA.keyId;
   }
 
   bool get isShiftPressed {
@@ -110,7 +101,7 @@ class PlutoKeyManagerEvent {
   }
 }
 
-/// 0118 dwk edited.
+///TODO: 0118 dwk edited.
 const _characters = {
   0x0000000041, // keyA,
   0x0000000042, // keyB,

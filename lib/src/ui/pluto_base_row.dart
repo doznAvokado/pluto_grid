@@ -287,7 +287,7 @@ class _RowContainerWidgetState extends PlutoStateWithChange<_RowContainerWidget>
 
     final bool isFocusedCurrentRow = isCurrentRow && stateManager.hasFocus;
 
-    /// 240201 dwk 행 구분선 기능 추가.
+    ///TODO: 240201 dwk 행 구분선 기능 추가.
     bool isCurrentRowSeparation = false;
     bool isPrevRowSeparation = false;
 

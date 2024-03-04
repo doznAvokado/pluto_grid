@@ -5,7 +5,7 @@ import 'package:intl/intl.dart' as intl;
 abstract class PlutoColumnType {
   dynamic get defaultValue;
 
-  /// 0816 dwk inputFormatters added.
+  ///TODO: 0816 dwk inputFormatters added.
   factory PlutoColumnType.autoComplete({
     dynamic defaultValue,
     bool isOnlyDigits = false,
@@ -433,7 +433,7 @@ class PlutoColumnTypeText implements PlutoColumnType {
 
   @override
   bool isValid(dynamic value) {
-    /// 0816 dwk edited.
+    ///TODO: 0816 dwk edited.
     final baseCondition = (value is String || value is num);
 
     if (validRegExp != null) {

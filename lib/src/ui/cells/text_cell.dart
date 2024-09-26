@@ -63,7 +63,7 @@ mixin TextCellState<T extends TextCell> on State<T> implements TextFieldProps {
   void initState() {
     super.initState();
 
-    cellFocus = FocusNode(onKey: _handleOnKey);
+    cellFocus = FocusNode(onKeyEvent: _handleOnKey);
 
     widget.stateManager.setTextEditingController(_textController);
 
@@ -205,7 +205,7 @@ mixin TextCellState<T extends TextCell> on State<T> implements TextFieldProps {
     }
   }
 
-  KeyEventResult _handleOnKey(FocusNode node, RawKeyEvent event) {
+  KeyEventResult _handleOnKey(FocusNode node, KeyEvent event) {
     var keyManager = PlutoKeyManagerEvent(
       focusNode: node,
       event: event,
@@ -402,7 +402,7 @@ mixin AutoCompleteTextCellState<T extends AutoCompleteTextCell> on State<T> impl
   @override
   void initState() {
     super.initState();
-    cellFocus = FocusNode(onKey: _handleOnKey);
+    cellFocus = FocusNode(onKeyEvent: _handleOnKey);
     widget.stateManager.setTextEditingController(textController);
     textController.text = formattedValue;
     _initialCellValue = textController.text;
@@ -680,7 +680,7 @@ mixin AutoCompleteTextCellState<T extends AutoCompleteTextCell> on State<T> impl
     }
   }
 
-  KeyEventResult _handleOnKey(FocusNode node, RawKeyEvent event) {
+  KeyEventResult _handleOnKey(FocusNode node, KeyEvent event) {
     var keyManager = PlutoKeyManagerEvent(
       focusNode: node,
       event: event,

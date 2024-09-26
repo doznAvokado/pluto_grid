@@ -92,6 +92,7 @@ class PlutoCustomCheckbox extends StatelessWidget {
                     side: BorderSide(color: unselectedColor, width: 1), borderRadius: BorderRadius.circular(4)),
               )
             : _CustomCheckbox(
+                radius: 0,
                 containerWidth: containerWidth,
                 containerHeight: containerHeight,
                 isChecked: value,
@@ -115,6 +116,7 @@ class _CustomCheckbox extends StatelessWidget {
     Key? key,
     required this.isChecked,
     required this.onChanged,
+    required this.radius,
     this.customCheckboxIcon,
     this.containerWidth,
     this.containerHeight,

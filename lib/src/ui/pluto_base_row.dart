@@ -39,17 +39,17 @@ class PlutoBaseRow extends StatelessWidget {
     return true;
   }
 
-  bool _handleOnWillAccept(PlutoRow? draggingRow) {
+  bool _handleOnWillAccept(DragTargetDetails<PlutoRow>? draggingRow) {
     if (draggingRow == null) {
       return false;
     }
 
-    return !_checkSameDragRows(draggingRow);
+    return !_checkSameDragRows(draggingRow.data);
   }
 
-  void _handleOnAccept(PlutoRow draggingRow) async {
+  void _handleOnAccept(DragTargetDetails<PlutoRow> draggingRow) async {
     final draggingRows =
-        stateManager.currentSelectingRows.isNotEmpty ? stateManager.currentSelectingRows : [draggingRow];
+        stateManager.currentSelectingRows.isNotEmpty ? stateManager.currentSelectingRows : [draggingRow.data];
 
     stateManager.eventManager!.addEvent(
       PlutoGridDragRowsEvent(

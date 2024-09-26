@@ -385,7 +385,7 @@ mixin AutoCompleteTextCellState<T extends AutoCompleteTextCell> on State<T> impl
   ///TODO: 0127 dwk added. ---- AutoComplete 관련 variables
   final LayerLink _optionsLayerLink = LayerLink();
   final ValueNotifier<int> _highlightedOptionIndex = ValueNotifier<int>(0);
-  Iterable<String> _options = Iterable<String>.empty();
+  Iterable<String> _options = const Iterable<String>.empty();
 
   ///TODO: 0214 dwk added. AutoCompleteItemList Container
   OverlayEntry? _floatingOptions;
@@ -624,7 +624,7 @@ mixin AutoCompleteTextCellState<T extends AutoCompleteTextCell> on State<T> impl
           //         })));
         },
       );
-      Overlay.of(context, rootOverlay: true)!.insert(newFloatingOptions);
+      Overlay.of(context, rootOverlay: true).insert(newFloatingOptions);
       _floatingOptions = newFloatingOptions;
     } else {
       _floatingOptions = null;

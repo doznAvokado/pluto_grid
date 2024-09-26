@@ -107,8 +107,8 @@ class PlutoBaseRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DragTarget<PlutoRow>(
-      onWillAccept: _handleOnWillAccept,
-      onAccept: _handleOnAccept,
+      onWillAcceptWithDetails: _handleOnWillAccept,
+      onAcceptWithDetails: _handleOnAccept,
       builder: _dragTargetBuilder,
     );
   }

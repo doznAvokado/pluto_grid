@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 
 class PlutoScaledCheckbox extends StatelessWidget {
   final bool? value;
@@ -116,7 +115,6 @@ class _CustomCheckbox extends StatelessWidget {
     Key? key,
     required this.isChecked,
     required this.onChanged,
-    this.radius = 4,
     this.customCheckboxIcon,
     this.containerWidth,
     this.containerHeight,
@@ -124,8 +122,8 @@ class _CustomCheckbox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Color appColorGreyBorder = Color(0xffc7d0dc);
-    final Color appColorPrimary100 = Color(0xff0078ff);
+    const Color appColorGreyBorder = Color(0xffc7d0dc);
+    const Color appColorPrimary100 = Color(0xff0078ff);
 
     if (onChanged == null || isChecked == null) {
       return InkWell(
@@ -142,7 +140,7 @@ class _CustomCheckbox extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.all(Radius.circular(radius)),
-                    border: Border.fromBorderSide(
+                    border: const Border.fromBorderSide(
                       BorderSide(
                         width: 1,
                         color: appColorGreyBorder,
@@ -180,7 +178,7 @@ class _CustomCheckbox extends StatelessWidget {
                   ),
                   border: isChecked!
                       ? null
-                      : Border.fromBorderSide(
+                      : const Border.fromBorderSide(
                           BorderSide(
                             width: 1,
                             color: appColorGreyBorder,

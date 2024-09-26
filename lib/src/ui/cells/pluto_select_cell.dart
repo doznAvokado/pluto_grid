@@ -488,28 +488,28 @@ class _PlutoDropDownCellListState extends State<PlutoDropDownCellList> {
 
   _setButtonStyle() {
     return ButtonStyle(
-      shape: MaterialStateProperty.all(
+      shape: WidgetStateProperty.all(
         const RoundedRectangleBorder(borderRadius: BorderRadius.zero),
       ),
-      backgroundColor: MaterialStateProperty.resolveWith(
+      backgroundColor: WidgetStateProperty.resolveWith(
         (states) {
-          if (states.contains(MaterialState.hovered) || states.contains(MaterialState.focused)) {
+          if (states.contains(WidgetState.hovered) || states.contains(WidgetState.focused)) {
             return appColorPrimary20;
           }
           return Colors.white;
         },
       ),
-      foregroundColor: MaterialStateProperty.resolveWith(
+      foregroundColor: WidgetStateProperty.resolveWith(
         (states) {
-          if (states.contains(MaterialState.hovered) || states.contains(MaterialState.focused)) {
+          if (states.contains(WidgetState.hovered) || states.contains(WidgetState.focused)) {
             return appColorPrimary100;
           }
           return appColorGreyPrimaryText;
         },
       ),
-      textStyle: MaterialStateProperty.resolveWith(
+      textStyle: WidgetStateProperty.resolveWith(
         (states) {
-          if (states.contains(MaterialState.hovered) || states.contains(MaterialState.focused)) {
+          if (states.contains(WidgetState.hovered) || states.contains(WidgetState.focused)) {
             return TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.w700,
@@ -527,11 +527,11 @@ class _PlutoDropDownCellListState extends State<PlutoDropDownCellList> {
           );
         },
       ),
-      padding: MaterialStateProperty.all(
+      padding: WidgetStateProperty.all(
         const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       ),
-      overlayColor: MaterialStateProperty.all(Colors.transparent),
-      shadowColor: MaterialStateProperty.all(Colors.transparent),
+      overlayColor: WidgetStateProperty.all(Colors.transparent),
+      shadowColor: WidgetStateProperty.all(Colors.transparent),
     );
   }
 }
